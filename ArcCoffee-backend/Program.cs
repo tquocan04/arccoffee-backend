@@ -1,4 +1,10 @@
+using Mapster;
+using Services.Extensions;
+
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddMapster();
+MappingConfig.Configure();
 
 // Add services to the container.
 
