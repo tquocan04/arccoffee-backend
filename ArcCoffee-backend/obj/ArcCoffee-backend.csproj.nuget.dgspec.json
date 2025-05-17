@@ -32,6 +32,9 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
+              "E:\\University\\Junior Year\\2nd semester\\.Net\\ArcCoffee-backend\\Entities\\Entities.csproj": {
+                "projectPath": "E:\\University\\Junior Year\\2nd semester\\.Net\\ArcCoffee-backend\\Entities\\Entities.csproj"
+              },
               "E:\\University\\Junior Year\\2nd semester\\.Net\\ArcCoffee-backend\\Services\\Services.csproj": {
                 "projectPath": "E:\\University\\Junior Year\\2nd semester\\.Net\\ArcCoffee-backend\\Services\\Services.csproj"
               }
@@ -54,6 +57,20 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "dependencies": {
+            "DotNetEnv": {
+              "target": "Package",
+              "version": "[3.1.1, )"
+            },
+            "Microsoft.EntityFrameworkCore.SqlServer": {
+              "target": "Package",
+              "version": "[8.0.16, )"
+            },
+            "Microsoft.EntityFrameworkCore.Tools": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[8.0.16, )"
+            },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
               "version": "[6.6.2, )"
@@ -192,6 +209,12 @@
       "frameworks": {
         "net8.0": {
           "targetAlias": "net8.0",
+          "dependencies": {
+            "Microsoft.AspNetCore.Identity.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[8.0.16, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",

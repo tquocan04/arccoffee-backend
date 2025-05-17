@@ -1,7 +1,18 @@
+﻿using DotNetEnv;
+using Entities.Context;
 using Mapster;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 using Services.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
+
+Env.Load();
+builder.Configuration["ConnectionStrings:DbConnection"] = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
+
+builder.Services.AddDbContext<Context>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DbConnection"),
+    b => b.MigrationsAssembly("ArcCoffee-backend")));
 
 builder.Services.AddMapster();
 MappingConfig.Configure();
@@ -12,6 +23,33 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddSwaggerGen(c =>
+{
+    // Thêm cấu hình JWT Bearer vào Swagger
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        In = ParameterLocation.Header,
+        Name = "Authorization",
+        Type = SecuritySchemeType.ApiKey,
+        BearerFormat = "JWT",
+        Description = "Chèn JWT token vào đây"
+    });
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+        {
+            {
+                new OpenApiSecurityScheme
+                {
+                    Reference = new OpenApiReference
+                    {
+                        Type = ReferenceType.SecurityScheme,
+                        Id = "Bearer"
+                    }
+                },
+                new string[] { }
+            }
+        });
+});
 
 var app = builder.Build();
 
