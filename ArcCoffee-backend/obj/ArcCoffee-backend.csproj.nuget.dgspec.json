@@ -412,7 +412,14 @@
         "frameworks": {
           "net8.0": {
             "targetAlias": "net8.0",
-            "projectReferences": {}
+            "projectReferences": {
+              "E:\\University\\Junior Year\\2nd semester\\.Net\\ArcCoffee-backend\\DTOs\\DTOs.csproj": {
+                "projectPath": "E:\\University\\Junior Year\\2nd semester\\.Net\\ArcCoffee-backend\\DTOs\\DTOs.csproj"
+              },
+              "E:\\University\\Junior Year\\2nd semester\\.Net\\ArcCoffee-backend\\Repository.Contracts\\Repository.Contracts.csproj": {
+                "projectPath": "E:\\University\\Junior Year\\2nd semester\\.Net\\ArcCoffee-backend\\Repository.Contracts\\Repository.Contracts.csproj"
+              }
+            }
           }
         },
         "warningProperties": {
@@ -483,6 +490,9 @@
               },
               "E:\\University\\Junior Year\\2nd semester\\.Net\\ArcCoffee-backend\\Entities\\Entities.csproj": {
                 "projectPath": "E:\\University\\Junior Year\\2nd semester\\.Net\\ArcCoffee-backend\\Entities\\Entities.csproj"
+              },
+              "E:\\University\\Junior Year\\2nd semester\\.Net\\ArcCoffee-backend\\Service.Contracts\\Service.Contracts.csproj": {
+                "projectPath": "E:\\University\\Junior Year\\2nd semester\\.Net\\ArcCoffee-backend\\Service.Contracts\\Service.Contracts.csproj"
               }
             }
           }

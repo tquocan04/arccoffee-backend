@@ -1,0 +1,22 @@
+﻿using Entities;
+using Entities.Context;
+using Microsoft.EntityFrameworkCore;
+using Repository.Contracts;
+
+namespace Repositories
+{
+    public class CategoryRepository : BaseRepository<Category>, ICategoryRepository
+    {
+        private readonly Context _context;
+
+        public CategoryRepository(Context context) : base(context)
+        {
+            _context = context;
+        }
+
+        public async Task<bool> IsCategoryExistAsync(string name)
+        {
+            return await _context.Categories.AnyAsync(c => c.Name == name);
+        }
+    }
+}

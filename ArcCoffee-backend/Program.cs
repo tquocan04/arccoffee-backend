@@ -19,6 +19,7 @@ builder.Services.AddMapster();
 MappingConfig.Configure();
 
 builder.Services.ConfigureRepository();
+builder.Services.ConfigureService();
 
 // Add services to the container.
 

@@ -1,4 +1,6 @@
-﻿using Mapster;
+﻿using DTOs.Requests;
+using Entities;
+using Mapster;
 
 namespace Services.Extensions
 {
@@ -8,7 +10,7 @@ namespace Services.Extensions
         {
             var config = TypeAdapterConfig.GlobalSettings;
 
-            // Thêm các cấu hình ánh xạ khác nếu cần
+            config.NewConfig<CreateCategoryRequest, Category>();
         }
     }
 }
