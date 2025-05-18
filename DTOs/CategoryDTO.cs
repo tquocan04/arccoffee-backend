@@ -1,4 +1,4 @@
 ﻿namespace DTOs
 {
-    public record CategoryDTO(string Name);
+    public record CategoryDTO(Guid Id, string Name);
 }

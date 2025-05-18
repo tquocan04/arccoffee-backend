@@ -12,7 +12,7 @@ namespace ArcCoffee_backend.Controllers
     {
         private readonly ICategoryService _categoryService;
 
-        public CategoryController(ICategoryService categoryService) 
+        public CategoryController(ICategoryService categoryService)
         {
             _categoryService = categoryService;
         }
@@ -20,21 +20,36 @@ namespace ArcCoffee_backend.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateNewCategory([FromBody] CreateCategoryRequest req)
         {
-            await _categoryService.CreateNewCategoryAsync(req);
+            var result = await _categoryService.CreateNewCategoryAsync(req);
 
-            return Ok(new Response<CreateCategoryRequest>
-            {
-                Message = "Successful.",
-                Data = req,
-            });
+            return CreatedAtAction(
+                nameof(GetCategoryById),
+                new { id = result.Id },
+                new Response<CategoryDTO>
+                {
+                    Message = "Successful.",
+                    Data = result,
+                });
         }
-        
+
         [HttpGet]
         public async Task<IActionResult> GetAllCategory()
         {
             var result = await _categoryService.GetAllCategoriesAsync();
 
             return Ok(new Response<IEnumerable<CategoryDTO>>
+            {
+                Message = "Successful.",
+                Data = result,
+            });
+        }
+
+        [HttpGet("{id:guid}")]
+        public async Task<IActionResult> GetCategoryById(Guid id)
+        {
+            var result = await _categoryService.GetCategoryByIdAsync(id, false);
+
+            return Ok(new Response<CategoryDTO>
             {
                 Message = "Successful.",
                 Data = result,

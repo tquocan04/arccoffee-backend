@@ -6,5 +6,6 @@ namespace Repository.Contracts
     {
         Task<bool> IsCategoryExistAsync(string name);
         Task<IEnumerable<Category>> GetCategoryListAsync();
+        Task<Category?> GetCategoryByIdAsync(Guid id, bool tracking);
     }
 }

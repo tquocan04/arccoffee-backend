@@ -20,7 +20,7 @@ namespace Services
             _categoryRepository = categoryRepository;
         }
 
-        public async Task CreateNewCategoryAsync(CreateCategoryRequest req)
+        public async Task<CategoryDTO> CreateNewCategoryAsync(CreateCategoryRequest req)
         {
             if (await _categoryRepository.IsCategoryExistAsync(req.Name))
             {
@@ -32,6 +32,8 @@ namespace Services
             await _categoryRepository.Create(category);
 
             await _categoryRepository.Save();
+
+            return _mapper.Map<CategoryDTO>(category);
         }
 
         public async Task<IEnumerable<CategoryDTO>> GetAllCategoriesAsync()
@@ -44,6 +46,14 @@ namespace Services
             }
 
             return _mapper.Map<IEnumerable<CategoryDTO>>(result);
+        }
+        
+        public async Task<CategoryDTO> GetCategoryByIdAsync(Guid id, bool tracking)
+        {
+            var result = await _categoryRepository.GetCategoryByIdAsync(id, tracking)
+                ?? throw new NotFoundCategoryException(id);
+            
+            return _mapper.Map<CategoryDTO>(result);
         }
     }
 }

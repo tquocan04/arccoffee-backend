@@ -25,5 +25,18 @@ namespace Repositories
                 .AsNoTracking()
                 .ToListAsync();
         }
+        
+        public async Task<Category?> GetCategoryByIdAsync(Guid id, bool tracking)
+        {
+            if (tracking)
+            {
+                return await _context.Categories
+                .FirstOrDefaultAsync(c => c.Id == id);
+            }
+
+            return await _context.Categories
+                .AsNoTracking()
+                .FirstOrDefaultAsync(c => c.Id == id);
+        }
     }
 }
