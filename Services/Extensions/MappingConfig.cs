@@ -13,6 +13,8 @@ namespace Services.Extensions
 
             config.NewConfig<CreateCategoryRequest, Category>();
             config.NewConfig<CategoryDTO, Category>().TwoWays();
+
+            config.NewConfig<ShippingDTO, ShippingMethod>().TwoWays();
         }
     }
 }

@@ -12,6 +12,7 @@ namespace ArcCoffee_backend.Extensions
             services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
 
             services.AddScoped<ICategoryRepository, CategoryRepository>();
+            services.AddScoped<IShippingRepository, ShippingRepository>();
 
             return services;
         }
@@ -19,6 +20,7 @@ namespace ArcCoffee_backend.Extensions
         public static IServiceCollection ConfigureService(this IServiceCollection services)
         {
             services.AddScoped<ICategoryService, CategoryService>();
+            services.AddScoped<IShippingService, ShippingService>();
 
             return services;
         }
