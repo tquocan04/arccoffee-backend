@@ -1,5 +1,6 @@
 ﻿using DTOs.Requests;
 using Entities;
+using ExceptionHandler.Category;
 using MapsterMapper;
 using Repository.Contracts;
 using Service.Contracts;
@@ -20,6 +21,11 @@ namespace Services
 
         public async Task CreateNewCategoryAsync(CreateCategoryRequest req)
         {
+            if (await _categoryRepository.IsCategoryExistAsync(req.Name))
+            {
+                throw new BadRequestCategoryNameIsExistedException(req.Name);
+            }
+
             var category = _mapper.Map<Category>(req);
 
             await _categoryRepository.Create(category);

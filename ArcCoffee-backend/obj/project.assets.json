@@ -2955,6 +2955,16 @@
           "bin/placeholder/Entities.dll": {}
         }
       },
+      "ExceptionHandler/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "compile": {
+          "bin/placeholder/ExceptionHandler.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/ExceptionHandler.dll": {}
+        }
+      },
       "Repositories/1.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v8.0",
@@ -3001,6 +3011,7 @@
         "dependencies": {
           "DTOs": "1.0.0",
           "Entities": "1.0.0",
+          "ExceptionHandler": "1.0.0",
           "Mapster": "7.4.0",
           "Mapster.DependencyInjection": "1.0.1",
           "Service.Contracts": "1.0.0"
@@ -9044,6 +9055,11 @@
       "path": "../Entities/Entities.csproj",
       "msbuildProject": "../Entities/Entities.csproj"
     },
+    "ExceptionHandler/1.0.0": {
+      "type": "project",
+      "path": "../ExceptionHandler/ExceptionHandler.csproj",
+      "msbuildProject": "../ExceptionHandler/ExceptionHandler.csproj"
+    },
     "Repositories/1.0.0": {
       "type": "project",
       "path": "../Repositories/Repositories.csproj",
@@ -9070,6 +9086,7 @@
       "DTOs >= 1.0.0",
       "DotNetEnv >= 3.1.1",
       "Entities >= 1.0.0",
+      "ExceptionHandler >= 1.0.0",
       "Microsoft.EntityFrameworkCore.SqlServer >= 8.0.16",
       "Microsoft.EntityFrameworkCore.Tools >= 8.0.16",
       "Repositories >= 1.0.0",
@@ -9116,6 +9133,9 @@
             },
             "E:\\University\\Junior Year\\2nd semester\\.Net\\ArcCoffee-backend\\Entities\\Entities.csproj": {
               "projectPath": "E:\\University\\Junior Year\\2nd semester\\.Net\\ArcCoffee-backend\\Entities\\Entities.csproj"
+            },
+            "E:\\University\\Junior Year\\2nd semester\\.Net\\ArcCoffee-backend\\ExceptionHandler\\ExceptionHandler.csproj": {
+              "projectPath": "E:\\University\\Junior Year\\2nd semester\\.Net\\ArcCoffee-backend\\ExceptionHandler\\ExceptionHandler.csproj"
             },
             "E:\\University\\Junior Year\\2nd semester\\.Net\\ArcCoffee-backend\\Repositories\\Repositories.csproj": {
               "projectPath": "E:\\University\\Junior Year\\2nd semester\\.Net\\ArcCoffee-backend\\Repositories\\Repositories.csproj"
