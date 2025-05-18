@@ -1,4 +1,5 @@
-﻿using DTOs.Requests;
+﻿using DTOs;
+using DTOs.Requests;
 using Entities;
 using Mapster;
 
@@ -11,6 +12,7 @@ namespace Services.Extensions
             var config = TypeAdapterConfig.GlobalSettings;
 
             config.NewConfig<CreateCategoryRequest, Category>();
+            config.NewConfig<CategoryDTO, Category>().TwoWays();
         }
     }
 }

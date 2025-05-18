@@ -18,5 +18,12 @@ namespace Repositories
         {
             return await _context.Categories.AnyAsync(c => c.Name == name);
         }
+
+        public async Task<IEnumerable<Category>> GetCategoryListAsync()
+        {
+            return await _context.Categories
+                .AsNoTracking()
+                .ToListAsync();
+        }
     }
 }

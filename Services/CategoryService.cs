@@ -1,4 +1,5 @@
-﻿using DTOs.Requests;
+﻿using DTOs;
+using DTOs.Requests;
 using Entities;
 using ExceptionHandler.Category;
 using MapsterMapper;
@@ -31,6 +32,18 @@ namespace Services
             await _categoryRepository.Create(category);
 
             await _categoryRepository.Save();
+        }
+
+        public async Task<IEnumerable<CategoryDTO>> GetAllCategoriesAsync()
+        {
+            var result = await _categoryRepository.GetCategoryListAsync();
+
+            if (result == null || !result.Any())
+            {
+                throw new NotFoundCategoryListException();
+            }
+
+            return _mapper.Map<IEnumerable<CategoryDTO>>(result);
         }
     }
 }

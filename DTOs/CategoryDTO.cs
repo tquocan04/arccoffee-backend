@@ -1,6 +1,4 @@
 ﻿namespace DTOs
 {
-    public class CategoryDTO
-    {
-    }
+    public record CategoryDTO(string Name);
 }

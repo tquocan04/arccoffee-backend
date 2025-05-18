@@ -1,12 +1,12 @@
-﻿using DTOs.Requests;
+﻿using DTOs;
+using DTOs.Requests;
 using DTOs.Responses;
-using Entities;
 using Microsoft.AspNetCore.Mvc;
 using Service.Contracts;
 
 namespace ArcCoffee_backend.Controllers
 {
-    [Route("api/category")]
+    [Route("api/categories")]
     [ApiController]
     public class CategoryController : ControllerBase
     {
@@ -26,6 +26,18 @@ namespace ArcCoffee_backend.Controllers
             {
                 Message = "Successful.",
                 Data = req,
+            });
+        }
+        
+        [HttpGet]
+        public async Task<IActionResult> GetAllCategory()
+        {
+            var result = await _categoryService.GetAllCategoriesAsync();
+
+            return Ok(new Response<IEnumerable<CategoryDTO>>
+            {
+                Message = "Successful.",
+                Data = result,
             });
         }
     }
