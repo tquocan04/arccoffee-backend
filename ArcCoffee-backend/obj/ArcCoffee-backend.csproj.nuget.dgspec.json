@@ -32,8 +32,20 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
+              "E:\\University\\Junior Year\\2nd semester\\.Net\\ArcCoffee-backend\\DTOs\\DTOs.csproj": {
+                "projectPath": "E:\\University\\Junior Year\\2nd semester\\.Net\\ArcCoffee-backend\\DTOs\\DTOs.csproj"
+              },
               "E:\\University\\Junior Year\\2nd semester\\.Net\\ArcCoffee-backend\\Entities\\Entities.csproj": {
                 "projectPath": "E:\\University\\Junior Year\\2nd semester\\.Net\\ArcCoffee-backend\\Entities\\Entities.csproj"
+              },
+              "E:\\University\\Junior Year\\2nd semester\\.Net\\ArcCoffee-backend\\Repositories\\Repositories.csproj": {
+                "projectPath": "E:\\University\\Junior Year\\2nd semester\\.Net\\ArcCoffee-backend\\Repositories\\Repositories.csproj"
+              },
+              "E:\\University\\Junior Year\\2nd semester\\.Net\\ArcCoffee-backend\\Repository.Contracts\\Repository.Contracts.csproj": {
+                "projectPath": "E:\\University\\Junior Year\\2nd semester\\.Net\\ArcCoffee-backend\\Repository.Contracts\\Repository.Contracts.csproj"
+              },
+              "E:\\University\\Junior Year\\2nd semester\\.Net\\ArcCoffee-backend\\Service.Contracts\\Service.Contracts.csproj": {
+                "projectPath": "E:\\University\\Junior Year\\2nd semester\\.Net\\ArcCoffee-backend\\Service.Contracts\\Service.Contracts.csproj"
               },
               "E:\\University\\Junior Year\\2nd semester\\.Net\\ArcCoffee-backend\\Services\\Services.csproj": {
                 "projectPath": "E:\\University\\Junior Year\\2nd semester\\.Net\\ArcCoffee-backend\\Services\\Services.csproj"
@@ -215,6 +227,209 @@
               "version": "[8.0.16, )"
             }
           },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.102/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "E:\\University\\Junior Year\\2nd semester\\.Net\\ArcCoffee-backend\\Repositories\\Repositories.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "E:\\University\\Junior Year\\2nd semester\\.Net\\ArcCoffee-backend\\Repositories\\Repositories.csproj",
+        "projectName": "Repositories",
+        "projectPath": "E:\\University\\Junior Year\\2nd semester\\.Net\\ArcCoffee-backend\\Repositories\\Repositories.csproj",
+        "packagesPath": "C:\\Users\\QuocAn\\.nuget\\packages\\",
+        "outputPath": "E:\\University\\Junior Year\\2nd semester\\.Net\\ArcCoffee-backend\\Repositories\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\QuocAn\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {
+              "E:\\University\\Junior Year\\2nd semester\\.Net\\ArcCoffee-backend\\Repository.Contracts\\Repository.Contracts.csproj": {
+                "projectPath": "E:\\University\\Junior Year\\2nd semester\\.Net\\ArcCoffee-backend\\Repository.Contracts\\Repository.Contracts.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.100"
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.102/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "E:\\University\\Junior Year\\2nd semester\\.Net\\ArcCoffee-backend\\Repository.Contracts\\Repository.Contracts.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "E:\\University\\Junior Year\\2nd semester\\.Net\\ArcCoffee-backend\\Repository.Contracts\\Repository.Contracts.csproj",
+        "projectName": "Repository.Contracts",
+        "projectPath": "E:\\University\\Junior Year\\2nd semester\\.Net\\ArcCoffee-backend\\Repository.Contracts\\Repository.Contracts.csproj",
+        "packagesPath": "C:\\Users\\QuocAn\\.nuget\\packages\\",
+        "outputPath": "E:\\University\\Junior Year\\2nd semester\\.Net\\ArcCoffee-backend\\Repository.Contracts\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\QuocAn\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {
+              "E:\\University\\Junior Year\\2nd semester\\.Net\\ArcCoffee-backend\\Entities\\Entities.csproj": {
+                "projectPath": "E:\\University\\Junior Year\\2nd semester\\.Net\\ArcCoffee-backend\\Entities\\Entities.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.100"
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.102/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "E:\\University\\Junior Year\\2nd semester\\.Net\\ArcCoffee-backend\\Service.Contracts\\Service.Contracts.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "E:\\University\\Junior Year\\2nd semester\\.Net\\ArcCoffee-backend\\Service.Contracts\\Service.Contracts.csproj",
+        "projectName": "Service.Contracts",
+        "projectPath": "E:\\University\\Junior Year\\2nd semester\\.Net\\ArcCoffee-backend\\Service.Contracts\\Service.Contracts.csproj",
+        "packagesPath": "C:\\Users\\QuocAn\\.nuget\\packages\\",
+        "outputPath": "E:\\University\\Junior Year\\2nd semester\\.Net\\ArcCoffee-backend\\Service.Contracts\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\QuocAn\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.100"
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
           "imports": [
             "net461",
             "net462",

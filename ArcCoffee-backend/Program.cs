@@ -1,4 +1,5 @@
-﻿using DotNetEnv;
+﻿using ArcCoffee_backend.Extensions;
+using DotNetEnv;
 using Entities.Context;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
@@ -16,6 +17,8 @@ builder.Services.AddDbContext<Context>(options =>
 
 builder.Services.AddMapster();
 MappingConfig.Configure();
+
+builder.Services.ConfigureRepository();
 
 // Add services to the container.
 
