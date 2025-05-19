@@ -1,25 +1,21 @@
 ﻿using ArcCoffee_backend.Extensions;
 using DotNetEnv;
-using Entities.Context;
 using Mapster;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Services.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
 Env.Load();
-builder.Configuration["ConnectionStrings:DbConnection"] = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
 
-builder.Services.AddDbContext<Context>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DbConnection"),
-    b => b.MigrationsAssembly("ArcCoffee-backend")));
+builder.Services.ConfigureDatabase();
 
 builder.Services.AddMapster();
 MappingConfig.Configure();
 
 builder.Services.ConfigureRepository();
 builder.Services.ConfigureService();
+builder.Services.ConfigureCloudinary();
 
 // Add services to the container.
 
