@@ -21,8 +21,15 @@ namespace Repositories
                 .AnyAsync(p => p.Name == name);
         }
 
-        public async Task<IList<Product>> GetProductListAsync(bool isAvailable)
+        public async Task<IList<Product>> GetProductListAsync(bool? isAvailable)
         {
+            if (isAvailable == null)
+            {
+                return await _context.Products
+                .AsNoTracking()
+                .ToListAsync();
+            }
+
             return await _context.Products
                 .AsNoTracking()
                 .Where(p => p.IsAvailable == isAvailable)

@@ -32,7 +32,31 @@ namespace ArcCoffee_backend.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> GetProductList()
+        {
+            var result = await _productService.GetProductListAsync(null);
+
+            return Ok(new Response<IEnumerable<ProductDTO>>
+            {
+                Message = "Successful.",
+                Data = result
+            });
+        }
+        
+        [HttpGet("available")]
         public async Task<IActionResult> GetAvailableProductList()
+        {
+            var result = await _productService.GetProductListAsync(true);
+
+            return Ok(new Response<IEnumerable<ProductDTO>>
+            {
+                Message = "Successful.",
+                Data = result
+            });
+        }
+        
+        [HttpGet("hidden")]
+        public async Task<IActionResult> GetHiddenProductList()
         {
             var result = await _productService.GetProductListAsync(false);
 

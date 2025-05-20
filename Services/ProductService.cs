@@ -54,7 +54,7 @@ namespace Services
             return newProduct;
         }
 
-        public async Task<IEnumerable<ProductDTO>> GetProductListAsync(bool isAvailable)
+        public async Task<IEnumerable<ProductDTO>> GetProductListAsync(bool? isAvailable)
         {
             var list = await _productRepository.GetProductListAsync(isAvailable);
 
