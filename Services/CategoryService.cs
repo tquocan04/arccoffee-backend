@@ -2,6 +2,7 @@
 using DTOs.Requests;
 using Entities;
 using ExceptionHandler.Category;
+using ExceptionHandler.General;
 using MapsterMapper;
 using Repository.Contracts;
 using Service.Contracts;
@@ -42,7 +43,7 @@ namespace Services
 
             if (result == null || !result.Any())
             {
-                throw new NotFoundCategoryListException();
+                throw new NotFoundListException();
             }
 
             return _mapper.Map<IEnumerable<CategoryDTO>>(result);

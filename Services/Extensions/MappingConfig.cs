@@ -17,6 +17,7 @@ namespace Services.Extensions
             config.NewConfig<ShippingDTO, ShippingMethod>().TwoWays();
             
             config.NewConfig<CreateProductRequest, Product>().TwoWays();
+            config.NewConfig<ProductDTO, Product>().TwoWays();
         }
     }
 }

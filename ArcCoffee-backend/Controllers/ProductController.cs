@@ -1,4 +1,5 @@
-﻿using DTOs.Requests;
+﻿using DTOs;
+using DTOs.Requests;
 using DTOs.Responses;
 using Entities;
 using Microsoft.AspNetCore.Mvc;
@@ -23,6 +24,18 @@ namespace ArcCoffee_backend.Controllers
             var result = await _productService.CreateNewProductAsync(req);
 
             return Ok(new Response<Product>
+            {
+                Message = "Successful.",
+                Data = result
+            });
+        }
+        
+        [HttpGet]
+        public async Task<IActionResult> GetAvailableProductList()
+        {
+            var result = await _productService.GetAvailableProductListAsync();
+
+            return Ok(new Response<IEnumerable<ProductDTO>>
             {
                 Message = "Successful.",
                 Data = result

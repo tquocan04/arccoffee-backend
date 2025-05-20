@@ -20,5 +20,13 @@ namespace Repositories
                 .AsNoTracking()
                 .AnyAsync(p => p.Name == name);
         }
+
+        public async Task<IList<Product>> GetAvailableProductListAsync()
+        {
+            return await _context.Products
+                .AsNoTracking()
+                .Where(p => p.IsAvailable)
+                .ToListAsync();
+        }
     }
 }

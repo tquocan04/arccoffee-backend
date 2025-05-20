@@ -1,5 +1,8 @@
-﻿using DTOs.Requests;
+﻿using DTOs;
+using DTOs.Requests;
 using Entities;
+using ExceptionHandler.Category;
+using ExceptionHandler.General;
 using ExceptionHandler.Product;
 using MapsterMapper;
 using Repository.Contracts;
@@ -12,14 +15,17 @@ namespace Services
     {
         private readonly IMapper _mapper;
         private readonly IProductRepository _productRepository;
+        private readonly ICategoryRepository _categoryRepository;
         private readonly CloudinaryService _cloudinary;
 
         public ProductService(IMapper mapper,
             IProductRepository productRepository,
+            ICategoryRepository categoryRepository,
             CloudinaryService cloudinary)
         {
             _mapper = mapper;
             _productRepository = productRepository;
+            _categoryRepository = categoryRepository;
             _cloudinary = cloudinary;
         }
 
@@ -46,6 +52,30 @@ namespace Services
             await _productRepository.Save();
 
             return newProduct;
+        }
+
+        public async Task<IEnumerable<ProductDTO>> GetAvailableProductListAsync()
+        {
+            var list = await _productRepository.GetAvailableProductListAsync();
+
+            if (list == null || !list.Any())
+            {
+                throw new NotFoundListException();
+            }
+
+            var result = _mapper.Map<IList<ProductDTO>>(list);
+
+            int length = result.Count;
+
+            for (int i = 0; i < length; i++)
+            {
+                var category = await _categoryRepository.GetCategoryByIdAsync(list[i].CategoryId, false)
+                    ?? throw new NotFoundCategoryException(list[i].CategoryId);
+
+                result[i].CategoryName = category.Name;
+            }
+
+            return result;
         }
     }
 }
