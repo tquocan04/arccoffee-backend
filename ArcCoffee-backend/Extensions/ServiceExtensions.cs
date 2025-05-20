@@ -1,5 +1,7 @@
-﻿using Entities.Context;
+﻿using CloudinaryDotNet;
+using Entities.Context;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Repositories;
 using Repository.Contracts;
 using Service.Contracts;
@@ -31,6 +33,7 @@ namespace ArcCoffee_backend.Extensions
 
             services.AddScoped<ICategoryRepository, CategoryRepository>();
             services.AddScoped<IShippingRepository, ShippingRepository>();
+            services.AddScoped<IProductRepository, ProductRepository>();
 
             return services;
         }
@@ -39,6 +42,7 @@ namespace ArcCoffee_backend.Extensions
         {
             services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<IShippingService, ShippingService>();
+            services.AddScoped<IProductService, ProductService>();
 
             return services;
         }
@@ -51,6 +55,15 @@ namespace ArcCoffee_backend.Extensions
                 options.ApiKey = Environment.GetEnvironmentVariable("CLOUDINARY_API_KEY");
                 options.ApiSecret = Environment.GetEnvironmentVariable("CLOUDINARY_API_SECRET");
             });
+
+            services.AddSingleton<Cloudinary>(provider =>
+            {
+                var settings = provider.GetRequiredService<IOptions<CloudinarySettings>>().Value;
+                var account = new Account(settings.CloudName, settings.ApiKey, settings.ApiSecret);
+                return new Cloudinary(account);
+            });
+
+            services.AddScoped<CloudinaryService>();
 
             return services;
         }
