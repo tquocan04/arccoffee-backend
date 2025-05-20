@@ -34,6 +34,7 @@ namespace ArcCoffee_backend.Extensions
             services.AddScoped<ICategoryRepository, CategoryRepository>();
             services.AddScoped<IShippingRepository, ShippingRepository>();
             services.AddScoped<IProductRepository, ProductRepository>();
+            services.AddScoped<IRegionRepository, RegionRepository>();
 
             return services;
         }
@@ -43,6 +44,7 @@ namespace ArcCoffee_backend.Extensions
             services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<IShippingService, ShippingService>();
             services.AddScoped<IProductService, ProductService>();
+            services.AddScoped<IRegionService, RegionService>();
 
             return services;
         }

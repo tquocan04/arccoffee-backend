@@ -18,6 +18,10 @@ namespace Services.Extensions
             
             config.NewConfig<CreateProductRequest, Product>().TwoWays();
             config.NewConfig<ProductDTO, Product>().TwoWays();
+            
+            config.NewConfig<RegionDTO, Region>().TwoWays();
+            config.NewConfig<CityDTO, City>().TwoWays();
+            config.NewConfig<DistrictDTO, District>().TwoWays();
         }
     }
 }
