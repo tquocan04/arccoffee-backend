@@ -31,6 +31,9 @@ namespace Services
 
         public async Task<Product> CreateNewProductAsync(CreateProductRequest req)
         {
+            var category = await _categoryRepository.GetCategoryByIdAsync(req.CategoryId, false)
+                ?? throw new NotFoundCategoryException(req.CategoryId);
+
             if (!string.IsNullOrEmpty(req.Name))
             {
                 if (await _productRepository.ProductExistsByNameAsync(req.Name))
@@ -92,7 +95,7 @@ namespace Services
 
             return result;
         }
-        
+
         public async Task UpdateStatusProductByIdAsync(Guid id)
         {
             var result = await _productRepository.GetProductByIdAsync(id, true)
@@ -102,6 +105,45 @@ namespace Services
                 result.IsAvailable = false;
             else
                 result.IsAvailable = true;
+
+            await _productRepository.Save();
+        }
+
+        public async Task UpdateProductAsync(Guid id, CreateProductRequest req)
+        {
+            var result = await _productRepository.GetProductByIdAsync(id, false)
+                ?? throw new NotFoundProductException(id);
+
+            var category = await _categoryRepository.GetCategoryByIdAsync(req.CategoryId, false)
+                ?? throw new NotFoundCategoryException(req.CategoryId);
+
+            var existingImg = result.Image;
+
+            if (!string.IsNullOrEmpty(req.Name))
+            {
+                if (req.Name != result.Name)
+                {
+                    if (await _productRepository.ProductExistsByNameAsync(req.Name))
+                    {
+                        throw new BadRequestProductExistsByNameException(req.Name);
+                    }
+                }
+            }
+
+            _mapper.Map(req, result);
+
+            if (req.Image != null && req.Image.Length != 0)
+            {
+                var url = await _cloudinary.UploadImageProductAsync(result, req.Image);
+
+                result.Image = url;
+            }
+            else
+            {
+                result.Image = existingImg;
+            }
+
+            _productRepository.Update(result);
 
             await _productRepository.Save();
         }

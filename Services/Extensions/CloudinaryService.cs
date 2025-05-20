@@ -2,6 +2,7 @@
 using CloudinaryDotNet.Actions;
 using Entities;
 using Microsoft.AspNetCore.Http;
+using System.Web;
 
 namespace Services.Extensions
 {
@@ -38,11 +39,21 @@ namespace Services.Extensions
             {
                 var random = GenerateRandomString();
 
+                // Tách tên file và phần mở rộng
+                var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(file.FileName);
+                var fileExtension = Path.GetExtension(file.FileName);
+
+                // Loại bỏ mọi mở rộng kép (nếu có)
+                while (Path.GetExtension(fileNameWithoutExtension) != "")
+                {
+                    fileNameWithoutExtension = Path.GetFileNameWithoutExtension(fileNameWithoutExtension);
+                }
+
                 // Tạo upload parameters với Stream từ IFormFile
                 var uploadParams = new ImageUploadParams
                 {
                     File = new FileDescription(file.FileName, file.OpenReadStream()),
-                    PublicId = $"product_{file.FileName}_{random}",
+                    PublicId = $"product_{fileNameWithoutExtension}_{random}",
                     Folder = "arc"
                 };
 

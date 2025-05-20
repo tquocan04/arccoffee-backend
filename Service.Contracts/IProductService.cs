@@ -10,5 +10,6 @@ namespace Service.Contracts
         Task<IEnumerable<ProductDTO>> GetProductListAsync(bool? isAvailable);
         Task<ProductDTO> GetProductByIdAsync(Guid id);
         Task UpdateStatusProductByIdAsync(Guid id);
+        Task UpdateProductAsync(Guid id, CreateProductRequest req);
     }
 }

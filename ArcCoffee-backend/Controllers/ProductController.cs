@@ -89,5 +89,16 @@ namespace ArcCoffee_backend.Controllers
                 Message = "Status updated successfully.",
             });
         }
+
+        [HttpPut("{id:guid}")]
+        public async Task<IActionResult> UpdateInforProduct(Guid id, [FromForm] CreateProductRequest req)
+        {
+            await _productService.UpdateProductAsync(id, req);
+
+            return Ok(new Response<string>
+            {
+                Message = "Product updated successfully"
+            });
+        }
     }
 }
