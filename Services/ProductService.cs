@@ -92,5 +92,18 @@ namespace Services
 
             return result;
         }
+        
+        public async Task UpdateStatusProductByIdAsync(Guid id)
+        {
+            var result = await _productRepository.GetProductByIdAsync(id, true)
+                ?? throw new NotFoundProductException(id);
+
+            if (result.IsAvailable)
+                result.IsAvailable = false;
+            else
+                result.IsAvailable = true;
+
+            await _productRepository.Save();
+        }
     }
 }

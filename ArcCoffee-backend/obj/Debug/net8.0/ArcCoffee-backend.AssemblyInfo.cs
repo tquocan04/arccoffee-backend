@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ArcCoffee-backend")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+bb1ffab9b01a38565a072a7c99bd821733a5de63")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9f60b04a8e0611f0eab711f8ee25ff7e2f81de79")]
 [assembly: System.Reflection.AssemblyProductAttribute("ArcCoffee-backend")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ArcCoffee-backend")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

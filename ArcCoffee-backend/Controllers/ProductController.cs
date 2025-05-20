@@ -78,5 +78,16 @@ namespace ArcCoffee_backend.Controllers
                 Data = result
             });
         }
+        
+        [HttpPatch("{id:guid}")]
+        public async Task<IActionResult> GUpdateStatusProductById(Guid id)
+        {
+            await _productService.UpdateStatusProductByIdAsync(id);
+
+            return Ok(new Response<string>
+            {
+                Message = "Status updated successfully.",
+            });
+        }
     }
 }
