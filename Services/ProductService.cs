@@ -1,5 +1,6 @@
 ﻿using DTOs.Requests;
 using Entities;
+using ExceptionHandler.Product;
 using MapsterMapper;
 using Repository.Contracts;
 using Service.Contracts;
@@ -24,6 +25,14 @@ namespace Services
 
         public async Task<Product> CreateNewProductAsync(CreateProductRequest req)
         {
+            if (!string.IsNullOrEmpty(req.Name))
+            {
+                if (await _productRepository.ProductExistsByNameAsync(req.Name))
+                {
+                    throw new BadRequestProductExistsByNameException(req.Name);
+                }
+            }
+
             var newProduct = _mapper.Map<Product>(req);
 
             if (req.Image != null && req.Image.Length != 0)
