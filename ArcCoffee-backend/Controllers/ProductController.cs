@@ -23,19 +23,32 @@ namespace ArcCoffee_backend.Controllers
         {
             var result = await _productService.CreateNewProductAsync(req);
 
-            return Ok(new Response<Product>
+            return CreatedAtAction(nameof(GetProductById), new { id = result.Id },
+                new Response<Product>
+                {
+                    Message = "Successful.",
+                    Data = result
+                });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAvailableProductList()
+        {
+            var result = await _productService.GetProductListAsync(false);
+
+            return Ok(new Response<IEnumerable<ProductDTO>>
             {
                 Message = "Successful.",
                 Data = result
             });
         }
-        
-        [HttpGet]
-        public async Task<IActionResult> GetAvailableProductList()
-        {
-            var result = await _productService.GetAvailableProductListAsync();
 
-            return Ok(new Response<IEnumerable<ProductDTO>>
+        [HttpGet("{id:guid}")]
+        public async Task<IActionResult> GetProductById(Guid id)
+        {
+            var result = await _productService.GetProductByIdAsync(id);
+
+            return Ok(new Response<ProductDTO>
             {
                 Message = "Successful.",
                 Data = result

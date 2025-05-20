@@ -21,12 +21,24 @@ namespace Repositories
                 .AnyAsync(p => p.Name == name);
         }
 
-        public async Task<IList<Product>> GetAvailableProductListAsync()
+        public async Task<IList<Product>> GetProductListAsync(bool isAvailable)
         {
             return await _context.Products
                 .AsNoTracking()
-                .Where(p => p.IsAvailable)
+                .Where(p => p.IsAvailable == isAvailable)
                 .ToListAsync();
+        }
+        
+        public async Task<Product?> GetProductByIdAsync(Guid id, bool tracking = false)
+        {
+            if (tracking)
+            {
+                return await _context.Products.FirstOrDefaultAsync(p => p.Id == id);
+            }
+
+            return await _context.Products
+                .AsNoTracking()
+                .FirstOrDefaultAsync(p => p.Id == id);
         }
     }
 }

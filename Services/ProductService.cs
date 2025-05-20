@@ -54,9 +54,9 @@ namespace Services
             return newProduct;
         }
 
-        public async Task<IEnumerable<ProductDTO>> GetAvailableProductListAsync()
+        public async Task<IEnumerable<ProductDTO>> GetProductListAsync(bool isAvailable)
         {
-            var list = await _productRepository.GetAvailableProductListAsync();
+            var list = await _productRepository.GetProductListAsync(isAvailable);
 
             if (list == null || !list.Any())
             {
@@ -74,6 +74,21 @@ namespace Services
 
                 result[i].CategoryName = category.Name;
             }
+
+            return result;
+        }
+
+        public async Task<ProductDTO> GetProductByIdAsync(Guid id)
+        {
+            var product = await _productRepository.GetProductByIdAsync(id)
+                ?? throw new NotFoundProductException(id);
+
+            var result = _mapper.Map<ProductDTO>(product);
+
+            var category = await _categoryRepository.GetCategoryByIdAsync(product.CategoryId, false)
+                ?? throw new NotFoundCategoryException(product.CategoryId);
+
+            result.CategoryName = category.Name;
 
             return result;
         }
