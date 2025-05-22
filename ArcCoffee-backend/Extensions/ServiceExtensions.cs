@@ -1,5 +1,7 @@
 ﻿using CloudinaryDotNet;
+using Entities;
 using Entities.Context;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Repositories;
@@ -7,6 +9,7 @@ using Repository.Contracts;
 using Service.Contracts;
 using Services;
 using Services.Extensions;
+using System;
 
 namespace ArcCoffee_backend.Extensions
 {
@@ -35,6 +38,8 @@ namespace ArcCoffee_backend.Extensions
             services.AddScoped<IShippingRepository, ShippingRepository>();
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped<IRegionRepository, RegionRepository>();
+            services.AddScoped<IAddressRepository, AddressRepository>();
+            services.AddScoped<IOrderRepository, OrderRepository>();
 
             return services;
         }
@@ -45,6 +50,16 @@ namespace ArcCoffee_backend.Extensions
             services.AddScoped<IShippingService, ShippingService>();
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<IRegionService, RegionService>();
+            services.AddScoped<IUserService, UserService>();
+
+            return services;
+        }
+
+        public static IServiceCollection ConfigureIdentity(this IServiceCollection services)
+        {
+            services.AddIdentity<User, Role>()
+            .AddEntityFrameworkStores<Context>()
+            .AddDefaultTokenProviders();
 
             return services;
         }

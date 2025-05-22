@@ -1,5 +1,6 @@
 ﻿using DTOs;
 using DTOs.Requests;
+using DTOs.Responses;
 using Entities;
 using Mapster;
 
@@ -22,6 +23,12 @@ namespace Services.Extensions
             config.NewConfig<RegionDTO, Region>().TwoWays();
             config.NewConfig<CityDTO, City>().TwoWays();
             config.NewConfig<DistrictDTO, District>().TwoWays();
+
+            config.NewConfig<RegisterRequest, User>().TwoWays();
+            config.NewConfig<RegisterRequest, Address>().TwoWays();
+            config.NewConfig<RegisterRequest, CustomerResponse>()
+                .Ignore(dest => dest.Picture)
+                .TwoWays();
         }
     }
 }

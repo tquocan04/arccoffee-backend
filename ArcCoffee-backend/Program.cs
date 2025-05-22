@@ -13,6 +13,7 @@ builder.Services.ConfigureDatabase();
 builder.Services.AddMapster();
 MappingConfig.Configure();
 
+builder.Services.ConfigureIdentity();
 builder.Services.ConfigureRepository();
 builder.Services.ConfigureService();
 builder.Services.ConfigureCloudinary();
