@@ -8,7 +8,7 @@ namespace DTOs.Requests
         public string? Name { get; set; }
         [EmailAddress(ErrorMessage = "Email is invalid")]
         public string Email { get; set; } = null!;
-        public string? Password { get; set; }
+        public string Password { get; set; } = null!;
         [RegularExpression(@"^\d+$", ErrorMessage = "Phone number must contain only digits.")]
         public string? PhoneNumber { get; set; }
         public string? Gender { get; set; }

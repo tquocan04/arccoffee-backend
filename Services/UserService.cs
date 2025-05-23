@@ -15,26 +15,32 @@ namespace Services
     {
         private readonly IMapper _mapper;
         private readonly UserManager<User> _userManager;
+        private readonly SignInManager<User> _signInManager;
         private readonly Context _context;
         private readonly IAddressRepository _addressRepository;
         private readonly IOrderRepository _orderRepository;
         private readonly IUserRepository _userRepository;
+        private readonly ITokenService _tokenService;
         private readonly CloudinaryService _cloudinary;
 
         public UserService(IMapper mapper,
             UserManager<User> userManager,
+            SignInManager<User> signInManager,
             Context context,
             IAddressRepository addressRepository,
             IOrderRepository orderRepository,
             IUserRepository userRepository,
+            ITokenService tokenService,
             CloudinaryService cloudinary)
         {
             _mapper = mapper;
             _userManager = userManager;
+            _signInManager = signInManager;
             _context = context;
             _addressRepository = addressRepository;
             _orderRepository = orderRepository;
             _userRepository = userRepository;
+            _tokenService = tokenService;
             _cloudinary = cloudinary;
         }
 
@@ -63,7 +69,7 @@ namespace Services
                     user.UserName = req.Email;
                     user.Id = Guid.NewGuid().ToString();
 
-                    var result = await _userManager.CreateAsync(user);
+                    var result = await _userManager.CreateAsync(user, req.Password);
 
                     if (result.Succeeded)
                     {
@@ -112,6 +118,23 @@ namespace Services
                     Console.WriteLine(ex.Message);
                     throw;
                 }
+        }
+
+        public async Task<(string?, string?)> LoginAsync(LoginRequest req)
+        {
+            var user = await _userManager.FindByEmailAsync(req.Login)
+                ?? throw new NotFoundUserByEmailException(req.Login);
+
+            var login = await _signInManager.PasswordSignInAsync(user, req.Password, false, false);
+
+            if (!login.Succeeded)
+                return (null, null);
+
+            var role = (await _userManager.GetRolesAsync(user)).First();
+
+            string token = _tokenService.GenerateToken(req, role, user.Id);
+
+            return (token, user.Picture);
         }
     }
 }

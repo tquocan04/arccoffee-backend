@@ -13,6 +13,7 @@ builder.Services.ConfigureDatabase();
 builder.Services.AddMapster();
 MappingConfig.Configure();
 
+builder.Services.ConfigureJWT(builder.Configuration);
 builder.Services.ConfigureIdentity();
 builder.Services.ConfigureRepository();
 builder.Services.ConfigureService();

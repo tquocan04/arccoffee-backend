@@ -1,15 +1,18 @@
 ﻿using CloudinaryDotNet;
 using Entities;
 using Entities.Context;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using Repositories;
 using Repository.Contracts;
 using Service.Contracts;
 using Services;
 using Services.Extensions;
-using System;
+using System.Text;
 
 namespace ArcCoffee_backend.Extensions
 {
@@ -52,13 +55,21 @@ namespace ArcCoffee_backend.Extensions
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<IRegionService, RegionService>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<ITokenService, TokenService>();
 
             return services;
         }
 
         public static IServiceCollection ConfigureIdentity(this IServiceCollection services)
         {
-            services.AddIdentity<User, Role>()
+            services.AddIdentity<User, Role>(options =>
+            {
+                options.Password.RequireDigit = true;
+                options.Password.RequiredLength = 8;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireLowercase = false;
+            })
             .AddEntityFrameworkStores<Context>()
             .AddDefaultTokenProviders();
 
@@ -84,6 +95,48 @@ namespace ArcCoffee_backend.Extensions
             services.AddScoped<CloudinaryService>();
 
             return services;
+        }
+
+        public static void ConfigureJWT(this IServiceCollection services, IConfiguration configuration)
+        {
+            var jwtSetting = configuration.GetSection("Jwt");
+
+            var secret = Environment.GetEnvironmentVariable("Jwt_Secret");
+            var issuer = Environment.GetEnvironmentVariable("Jwt_Issuer");
+            var audience = Environment.GetEnvironmentVariable("Jwt_Audience");
+
+            services.AddAuthentication(option =>
+            {
+                option.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters   //tham so xac thuc cho jwt
+                {
+                    //cap token: true-> dich vu, false->tu cap
+                    ValidateIssuer = false,
+                    //ValidIssuer = jwtSetting["Issuer"],
+
+                    ValidateAudience = false,
+                    //ValidAudience = jwtSetting["Audience"],
+
+                    ClockSkew = TimeSpan.Zero, // bo tg chenh lech
+                    ValidateLifetime = true,    //xac thuc thoi gian ton tai cua token
+
+                    //ky vao token
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret)),
+                    ValidateIssuerSigningKey = true
+                };
+                options.Events = new JwtBearerEvents
+                {
+                    OnAuthenticationFailed = context =>
+                    {
+                        context.Response.StatusCode = 401;
+                        context.Response.ContentType = "application/json";
+                        var result = JsonConvert.SerializeObject(new { StatusCode = 401, Message = "Invalid token." });
+                        return context.Response.WriteAsync(result);
+                    }
+                };
+            });
         }
     }
 }
