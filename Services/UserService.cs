@@ -18,6 +18,7 @@ namespace Services
         private readonly Context _context;
         private readonly IAddressRepository _addressRepository;
         private readonly IOrderRepository _orderRepository;
+        private readonly IUserRepository _userRepository;
         private readonly CloudinaryService _cloudinary;
 
         public UserService(IMapper mapper,
@@ -25,13 +26,15 @@ namespace Services
             Context context,
             IAddressRepository addressRepository,
             IOrderRepository orderRepository,
-            CloudinaryService cloudinary) 
+            IUserRepository userRepository,
+            CloudinaryService cloudinary)
         {
             _mapper = mapper;
             _userManager = userManager;
             _context = context;
             _addressRepository = addressRepository;
             _orderRepository = orderRepository;
+            _userRepository = userRepository;
             _cloudinary = cloudinary;
         }
 
@@ -41,6 +44,9 @@ namespace Services
 
             if (user != null)
                 throw new BadRequestUserExistsByEmailException(req.Email);
+
+            if (!_userRepository.CheckValidDob(req.Day, req.Month, req.Year))
+                throw new BadRequestInvalidDobException();
 
             using (var transaction = await _context.Database.BeginTransactionAsync())
                 try
@@ -85,9 +91,9 @@ namespace Services
 
                     await Task.WhenAll(addressTask, orderTask);
 
-                    await transaction.CommitAsync(); 
-
                     await _context.SaveChangesAsync();
+
+                    await transaction.CommitAsync();
 
                     CustomerResponse response = new()
                     {
@@ -95,7 +101,7 @@ namespace Services
                         Picture = user.Picture,
                         OrderId = order.Id,
                     };
-                    
+
                     _mapper.Map(req, response);
 
                     return response;
@@ -104,10 +110,8 @@ namespace Services
                 {
                     await transaction.RollbackAsync();
                     Console.WriteLine(ex.Message);
-                    throw new Exception();
+                    throw;
                 }
-                
-
         }
     }
 }

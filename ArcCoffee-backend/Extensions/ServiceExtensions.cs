@@ -40,6 +40,7 @@ namespace ArcCoffee_backend.Extensions
             services.AddScoped<IRegionRepository, RegionRepository>();
             services.AddScoped<IAddressRepository, AddressRepository>();
             services.AddScoped<IOrderRepository, OrderRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
 
             return services;
         }
