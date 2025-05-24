@@ -1,4 +1,5 @@
-﻿using DTOs.Requests;
+﻿using DTOs;
+using DTOs.Requests;
 using DTOs.Responses;
 using Entities;
 using Entities.Context;
@@ -21,6 +22,7 @@ namespace Services
         private readonly IOrderRepository _orderRepository;
         private readonly IUserRepository _userRepository;
         private readonly ITokenService _tokenService;
+        private readonly IAddressService<UserDTO> _addressService;
         private readonly CloudinaryService _cloudinary;
 
         public UserService(IMapper mapper,
@@ -31,6 +33,7 @@ namespace Services
             IOrderRepository orderRepository,
             IUserRepository userRepository,
             ITokenService tokenService,
+            IAddressService<UserDTO> addressService,
             CloudinaryService cloudinary)
         {
             _mapper = mapper;
@@ -41,6 +44,7 @@ namespace Services
             _orderRepository = orderRepository;
             _userRepository = userRepository;
             _tokenService = tokenService;
+            _addressService = addressService;
             _cloudinary = cloudinary;
         }
 
@@ -130,11 +134,27 @@ namespace Services
             if (!login.Succeeded)
                 return (null, null);
 
-            var role = (await _userManager.GetRolesAsync(user)).First();
+            var role = (await _userManager.GetRolesAsync(user)).FirstOrDefault();
 
             string token = _tokenService.GenerateToken(req, role, user.Id);
 
             return (token, user.Picture);
+        }
+
+        public async Task<UserDTO> GetProfileAsync(string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email)
+                ?? throw new NotFoundUserByEmailException(email);
+
+            UserDTO result = _mapper.Map<UserDTO>(user);
+
+            result.Year = user.Dob.Year;
+            result.Month = user.Dob.Month;
+            result.Day = user.Dob.Day;
+
+            result = await _addressService.SetAddressAsync(result, Guid.Parse(user.Id));
+
+            return result;
         }
     }
 }

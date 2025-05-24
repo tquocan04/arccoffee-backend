@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json;
 using Repositories;
 using Repository.Contracts;
 using Service.Contracts;
@@ -44,6 +43,7 @@ namespace ArcCoffee_backend.Extensions
             services.AddScoped<IAddressRepository, AddressRepository>();
             services.AddScoped<IOrderRepository, OrderRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IAddressRepository, AddressRepository>();
 
             return services;
         }
@@ -56,6 +56,8 @@ namespace ArcCoffee_backend.Extensions
             services.AddScoped<IRegionService, RegionService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<ITokenService, TokenService>();
+
+            services.AddScoped(typeof(IAddressService<>), typeof(AddressService<>));
 
             return services;
         }
@@ -99,8 +101,6 @@ namespace ArcCoffee_backend.Extensions
 
         public static void ConfigureJWT(this IServiceCollection services, IConfiguration configuration)
         {
-            var jwtSetting = configuration.GetSection("Jwt");
-
             var secret = Environment.GetEnvironmentVariable("Jwt_Secret");
             var issuer = Environment.GetEnvironmentVariable("Jwt_Issuer");
             var audience = Environment.GetEnvironmentVariable("Jwt_Audience");
@@ -108,16 +108,17 @@ namespace ArcCoffee_backend.Extensions
             services.AddAuthentication(option =>
             {
                 option.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                option.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             }).AddJwtBearer(options =>
             {
                 options.TokenValidationParameters = new TokenValidationParameters   //tham so xac thuc cho jwt
                 {
                     //cap token: true-> dich vu, false->tu cap
-                    ValidateIssuer = false,
-                    //ValidIssuer = jwtSetting["Issuer"],
+                    ValidateIssuer = true,
+                    ValidIssuer = issuer,
 
-                    ValidateAudience = false,
-                    //ValidAudience = jwtSetting["Audience"],
+                    ValidateAudience = true,
+                    ValidAudience = audience,
 
                     ClockSkew = TimeSpan.Zero, // bo tg chenh lech
                     ValidateLifetime = true,    //xac thuc thoi gian ton tai cua token
@@ -126,16 +127,22 @@ namespace ArcCoffee_backend.Extensions
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret)),
                     ValidateIssuerSigningKey = true
                 };
-                options.Events = new JwtBearerEvents
-                {
-                    OnAuthenticationFailed = context =>
-                    {
-                        context.Response.StatusCode = 401;
-                        context.Response.ContentType = "application/json";
-                        var result = JsonConvert.SerializeObject(new { StatusCode = 401, Message = "Invalid token." });
-                        return context.Response.WriteAsync(result);
-                    }
-                };
+            });
+        }
+
+        public static void ConfigurePolicies(this IServiceCollection services)
+        {
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("All", policy =>
+                    policy.RequireRole("Admin", "Staff", "Customer"));
+                options.AddPolicy("CustomerOnly", policy =>
+                    policy.RequireRole("Customer"));
+                options.AddPolicy("StaffOnly", policy =>
+                    policy.RequireRole("Staff"));
+                options.AddPolicy("AdminOnly", policy =>
+                    policy.RequireRole("Admin"));
+
             });
         }
     }

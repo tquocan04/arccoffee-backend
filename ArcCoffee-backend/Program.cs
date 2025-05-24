@@ -13,18 +13,18 @@ builder.Services.ConfigureDatabase();
 builder.Services.AddMapster();
 MappingConfig.Configure();
 
-builder.Services.ConfigureJWT(builder.Configuration);
-builder.Services.ConfigureIdentity();
-builder.Services.ConfigureRepository();
-builder.Services.ConfigureService();
-builder.Services.ConfigureCloudinary();
-
 // Add services to the container.
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.ConfigureIdentity();
+builder.Services.ConfigureJWT(builder.Configuration);
+builder.Services.ConfigurePolicies();
+builder.Services.ConfigureRepository();
+builder.Services.ConfigureService();
+builder.Services.ConfigureCloudinary();
 
 builder.Services.AddSwaggerGen(c =>
 {
@@ -48,7 +48,7 @@ builder.Services.AddSwaggerGen(c =>
                         Id = "Bearer"
                     }
                 },
-                new string[] { }
+                Array.Empty<string>()
             }
         });
 });
@@ -64,8 +64,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
