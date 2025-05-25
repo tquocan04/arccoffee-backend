@@ -1,7 +1,9 @@
 ﻿using DTOs;
 using DTOs.Requests;
 using DTOs.Responses;
+using Entities;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Service.Contracts;
 using System.Security.Claims;
@@ -13,10 +15,12 @@ namespace ArcCoffee_backend.Controllers
     public class AuthenticationController : ControllerBase
     {
         private readonly IUserService _userService;
+        private readonly UserManager<User> _userManager;
 
-        public AuthenticationController(IUserService userService) 
+        public AuthenticationController(IUserService userService, UserManager<User> userManager) 
         {
             _userService = userService;
+            _userManager = userManager;
         }
 
         [HttpPost]
@@ -74,6 +78,25 @@ namespace ArcCoffee_backend.Controllers
             {
                 Message = "Successful.",
                 Data = result
+            });
+        }
+
+        [HttpGet("email")]
+        public async Task<IActionResult> CheckEmailExist([FromQuery] string email)
+        {
+            var result = await _userManager.FindByEmailAsync(email);
+
+            if (result == null) 
+            {
+                return BadRequest(new Response<string>
+                {
+                    Message = "Invalid email!"
+                });
+            }
+
+            return Ok(new Response<string>
+            {
+                Message = "Valid email!"
             });
         }
     }
