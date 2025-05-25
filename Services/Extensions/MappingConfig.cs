@@ -19,6 +19,10 @@ namespace Services.Extensions
             
             config.NewConfig<CreateProductRequest, Product>().TwoWays();
             config.NewConfig<ProductDTO, Product>().TwoWays();
+
+            config.NewConfig<ItemDTO, Product>()
+                .Map(dest => dest.Id, src => src.ProductId)
+                .TwoWays();
             
             config.NewConfig<RegionDTO, Region>().TwoWays();
             config.NewConfig<CityDTO, City>().TwoWays();

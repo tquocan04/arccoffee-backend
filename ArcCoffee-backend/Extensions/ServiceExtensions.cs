@@ -56,6 +56,7 @@ namespace ArcCoffee_backend.Extensions
             services.AddScoped<IRegionService, RegionService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<ITokenService, TokenService>();
+            services.AddScoped<IOrderService, OrderService>();
 
             services.AddScoped(typeof(IAddressService<>), typeof(AddressService<>));
 

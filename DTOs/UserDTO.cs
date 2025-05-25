@@ -4,7 +4,7 @@ namespace DTOs
 {
     public class UserDTO
     {
-        public Guid Id { get; set; }
+        public string Id { get; set; } = null!;
         public string? Name { get; set; }
         public string? Email { get; set; }
         public string? PhoneNumber { get; set; }
@@ -21,7 +21,7 @@ namespace DTOs
 
     public class UserUpdateDTO
     {
-        public Guid Id { get; set; }
+        public string Id { get; set; } = null!;
         public string? Name { get; set; }
         public string? Gender { get; set; }
         public string? Email { get; set; }
