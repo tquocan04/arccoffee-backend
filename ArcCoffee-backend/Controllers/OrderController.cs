@@ -3,6 +3,7 @@ using DTOs.Responses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service.Contracts;
+using Services;
 using System.Security.Claims;
 
 namespace ArcCoffee_backend.Controllers
@@ -34,6 +35,23 @@ namespace ArcCoffee_backend.Controllers
                 Message = "Successful.",
                 Data = result
             });
+        }
+
+        [HttpPost("item")]
+        public async Task<IActionResult> AddToCart([FromQuery] Guid productId)
+        {
+            string? id = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrEmpty(id))
+            {
+                return Unauthorized(new Response<string>
+                {
+                    Message = "Unable to authenticate user"
+                });
+            }
+
+            await _order.AddToCartAsync(id, productId);
+            return NoContent();
         }
     }
 }
