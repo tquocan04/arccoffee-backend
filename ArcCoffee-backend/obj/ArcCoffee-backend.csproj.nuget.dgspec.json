@@ -141,7 +141,11 @@
         "frameworks": {
           "net8.0": {
             "targetAlias": "net8.0",
-            "projectReferences": {}
+            "projectReferences": {
+              "E:\\University\\Junior Year\\2nd semester\\.Net\\ArcCoffee-backend\\Entities\\Entities.csproj": {
+                "projectPath": "E:\\University\\Junior Year\\2nd semester\\.Net\\ArcCoffee-backend\\Entities\\Entities.csproj"
+              }
+            }
           }
         },
         "warningProperties": {

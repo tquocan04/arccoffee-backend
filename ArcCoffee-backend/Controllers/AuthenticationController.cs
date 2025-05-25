@@ -53,5 +53,28 @@ namespace ArcCoffee_backend.Controllers
                 Data = result
             });
         }
+        
+        [Authorize(Policy = "CustomerOnly")]
+        [HttpPut]
+        public async Task<IActionResult> UpdateProfile([FromForm] UpdateUserRequest req)
+        {
+            string? email = User.FindFirst(ClaimTypes.Name)?.Value;
+
+            if (string.IsNullOrEmpty(email))
+            {
+                return Unauthorized(new Response<string>
+                {
+                    Message = "Unable to authenticate user"
+                });
+            }
+
+            var result = await _userService.UpdateUserAsync(email, req);
+
+            return Ok(new Response<UserUpdateDTO>
+            {
+                Message = "Successful.",
+                Data = result
+            });
+        }
     }
 }

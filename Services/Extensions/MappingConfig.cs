@@ -27,6 +27,7 @@ namespace Services.Extensions
             config.NewConfig<RegisterRequest, User>().TwoWays();
             config.NewConfig<UserDTO, User>().TwoWays();
             config.NewConfig<RegisterRequest, Address>().TwoWays();
+            config.NewConfig<UpdateUserRequest, Address>().TwoWays();
             config.NewConfig<RegisterRequest, CustomerResponse>()
                 .Ignore(dest => dest.Picture)
                 .TwoWays();

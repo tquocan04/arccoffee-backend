@@ -9,5 +9,6 @@ namespace Service.Contracts
         Task<CustomerResponse> CreateNewCustomerAsync(RegisterRequest req);
         Task<(string?, string?)> LoginAsync(LoginRequest req);
         Task<UserDTO> GetProfileAsync(string email);
+        Task<UserUpdateDTO> UpdateUserAsync(string email, UpdateUserRequest req);
     }
 }

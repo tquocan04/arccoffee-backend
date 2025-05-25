@@ -3,6 +3,7 @@ using DTOs.Requests;
 using DTOs.Responses;
 using Entities;
 using Entities.Context;
+using ExceptionHandler.Address;
 using ExceptionHandler.User;
 using MapsterMapper;
 using Microsoft.AspNetCore.Identity;
@@ -23,6 +24,7 @@ namespace Services
         private readonly IUserRepository _userRepository;
         private readonly ITokenService _tokenService;
         private readonly IAddressService<UserDTO> _addressService;
+        private readonly IAddressService<UserUpdateDTO> _addressUpdateService;
         private readonly CloudinaryService _cloudinary;
 
         public UserService(IMapper mapper,
@@ -34,6 +36,7 @@ namespace Services
             IUserRepository userRepository,
             ITokenService tokenService,
             IAddressService<UserDTO> addressService,
+            IAddressService<UserUpdateDTO> addressUpdateService,
             CloudinaryService cloudinary)
         {
             _mapper = mapper;
@@ -45,6 +48,7 @@ namespace Services
             _userRepository = userRepository;
             _tokenService = tokenService;
             _addressService = addressService;
+            _addressUpdateService = addressUpdateService;
             _cloudinary = cloudinary;
         }
 
@@ -155,6 +159,67 @@ namespace Services
             result = await _addressService.SetAddressAsync(result, Guid.Parse(user.Id));
 
             return result;
+        }
+
+        public async Task<UserUpdateDTO> UpdateUserAsync(string email, UpdateUserRequest req)
+        {
+            var user = await _userManager.FindByEmailAsync(email)
+                ?? throw new NotFoundUserByEmailException(email);
+
+            if (!_userRepository.CheckValidDob(req.Day, req.Month, req.Year))
+                throw new BadRequestInvalidDobException();
+
+            using (var transaction = await _context.Database.BeginTransactionAsync())
+                try
+                {
+                    var address = await _addressRepository.GetAddressByObjectIdAsync(Guid.Parse(user.Id))
+                        ?? throw new NotFoundAddressException(Guid.Parse(user.Id));
+
+                    var picture = user.Picture;
+
+                    _mapper.Map(req, user);
+
+                    if (req.Picture != null && req.Picture.Length > 0)
+                    {
+                        var url = await _cloudinary.UploadImageCustomerAsync(req.Picture);
+                        user.Picture = url;
+                    }
+                    else
+                    {
+                        user.Picture = picture;
+                    }
+
+                    user.Dob = new DateOnly(req.Year, req.Month, req.Day);
+
+                    var resultUpdate = await _userManager.UpdateAsync(user);
+
+                    if (!resultUpdate.Succeeded)
+                    {
+                        await transaction.RollbackAsync();
+                        throw new Exception();
+                    }
+
+                    if (address.DistrictId != req.DistrictId || address.Street != req.Street)
+                    {
+                        _mapper.Map(req, address);
+                        _addressRepository.Update(address);
+                    }
+
+                    await _context.SaveChangesAsync();
+
+                    await transaction.CommitAsync();
+
+                    var result = _mapper.Map<UserUpdateDTO>(user);
+
+                    result = await _addressUpdateService.SetAddressAsync(result, Guid.Parse(user.Id));
+
+                    return result;
+                }
+                catch
+                {
+                    await transaction.RollbackAsync();
+                    throw;
+                }
         }
     }
 }
