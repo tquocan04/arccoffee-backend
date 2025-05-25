@@ -221,5 +221,24 @@ namespace Services
                     throw;
                 }
         }
+
+        public async Task ChangePasswordAsync(string email, ChangePasswordRequest req)
+        {
+            var user = await _userManager.FindByEmailAsync(email)
+                ?? throw new NotFoundUserByEmailException(email);
+
+            bool checkCurrentPassword = await _userManager.CheckPasswordAsync(user, req.CurrentPassword);
+
+            if (!checkCurrentPassword)
+            {
+                throw new BadRequestCurrentPasswordException();
+            }
+
+            var result = await _userManager.ChangePasswordAsync(user, req.CurrentPassword,
+                req.NewPassword);
+
+            if (!result.Succeeded)
+                throw new BadRequestChangePasswordException();
+        }
     }
 }

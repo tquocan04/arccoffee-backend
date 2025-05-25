@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Service.Contracts;
+using Sprache;
 using System.Security.Claims;
 
 namespace ArcCoffee_backend.Controllers
@@ -97,6 +98,27 @@ namespace ArcCoffee_backend.Controllers
             return Ok(new Response<string>
             {
                 Message = "Valid email!"
+            });
+        }
+
+        [HttpPut("password")]
+        public async Task<IActionResult> UpdateNewPassword([FromBody] ChangePasswordRequest req)
+        {
+            string? email = User.FindFirst(ClaimTypes.Name)?.Value;
+
+            if (string.IsNullOrEmpty(email))
+            {
+                return Unauthorized(new Response<string>
+                {
+                    Message = "Invalid token!"
+                });
+            }
+
+            await _userService.ChangePasswordAsync(email, req);
+
+            return Ok(new Response<string>
+            {
+                Message = "Successful."
             });
         }
     }

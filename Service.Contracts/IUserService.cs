@@ -10,5 +10,6 @@ namespace Service.Contracts
         Task<(string?, string?)> LoginAsync(LoginRequest req);
         Task<UserDTO> GetProfileAsync(string email);
         Task<UserUpdateDTO> UpdateUserAsync(string email, UpdateUserRequest req);
+        Task ChangePasswordAsync(string email, ChangePasswordRequest req);
     }
 }
