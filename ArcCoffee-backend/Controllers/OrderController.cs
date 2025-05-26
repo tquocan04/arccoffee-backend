@@ -53,5 +53,22 @@ namespace ArcCoffee_backend.Controllers
             await _order.AddToCartAsync(id, productId);
             return NoContent();
         }
+        
+        [HttpDelete("item")]
+        public async Task<IActionResult> DeleteItem([FromQuery] Guid productId)
+        {
+            string? id = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrEmpty(id))
+            {
+                return Unauthorized(new Response<string>
+                {
+                    Message = "Unable to authenticate user"
+                });
+            }
+
+            await _order.DeleteItemInCartAsync(id, productId);
+            return NoContent();
+        }
     }
 }

@@ -9,31 +9,21 @@ namespace Repositories
     {
         private readonly Context _context = context;
 
-        public async Task<Order> GetCartByCustomerIdAsync(string customerId)
+        public async Task<Order> GetCartByCustomerIdAsync(string customerId, bool tracking = false)
         {
-            return await _context.Orders
+            if (!tracking)
+            {
+                return await _context.Orders
                 .AsNoTracking()
                 .Include(o => o.Items)
                 .FirstAsync(o => o.UserId == customerId
                               && o.IsCart == true);
-        }
+            }
 
-        public async Task<Item?> GetItemAsync(Guid orderId, Guid productId)
-        {
-            return await _context.Items
-                .AsNoTracking()
-                .FirstOrDefaultAsync(i => i.OrderId == orderId
-                        && i.ProductId == productId);
-        }
-
-        public void AddItemToCart(Item item)
-        {
-            _context.Items.Add(item);
-        }
-
-        public void UpdateQuantityItemToCart(Item item)
-        {
-            _context.Items.Update(item);
+            return await _context.Orders
+                .Include(o => o.Items)
+                .FirstAsync(o => o.UserId == customerId
+                              && o.IsCart == true);
         }
 
         public async Task<Order?> GetOrderByIdAsync(Guid id, bool tracking = false)
