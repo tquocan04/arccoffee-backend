@@ -6,5 +6,6 @@ namespace Repository.Contracts
     {
         Task<Order> GetCartByCustomerIdAsync(string customerId, bool tracking = false);
         Task<Order?> GetOrderByIdAsync(Guid id, bool tracking = false);
+        Task<Order> GetCartWithoutItemsByCustomerIdAsync(string customerId, bool tracking = false);
     }
 }

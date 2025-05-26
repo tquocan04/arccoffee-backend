@@ -9,5 +9,6 @@ namespace Service.Contracts
         Task AddToCartAsync(string id, Guid productId);
         Task DeleteItemInCartAsync(string id, Guid productId);
         Task<CartDTO> MergeCartFromClientAsync(string customerId, List<ItemRequest> req);
+        Task UpdateQuantityItemAsync(string customerId, Guid productId, int quantity);
     }
 }

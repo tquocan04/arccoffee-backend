@@ -102,5 +102,23 @@ namespace ArcCoffee_backend.Controllers
             });
 
         }
+
+        [HttpPut("{productId:guid}")]
+        public async Task<IActionResult> UpdateQuantityItem(Guid productId, [FromQuery] int quantity)
+        {
+            string? id = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrEmpty(id))
+            {
+                return Unauthorized(new Response<string>
+                {
+                    Message = "Unable to authenticate user"
+                });
+            }
+
+            await _order.UpdateQuantityItemAsync(id, productId, quantity);
+
+            return NoContent();
+        }
     }
 }

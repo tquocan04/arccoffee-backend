@@ -151,9 +151,7 @@ namespace Services
             using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
-                Order order = await _context.Orders
-                                .AsNoTracking()
-                                .FirstAsync(o => o.UserId == customerId && o.IsCart == true);
+                Order order = await _orderRepository.GetCartWithoutItemsByCustomerIdAsync(customerId);
 
                 Guid cartId = order.Id;
 
@@ -230,6 +228,60 @@ namespace Services
                 throw;
             }
 
+        }
+
+        public async Task UpdateQuantityItemAsync(string customerId, Guid productId, int quantity)
+        {
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
+            {
+                var cart = await _orderRepository.GetCartWithoutItemsByCustomerIdAsync(customerId);
+
+                var cartId = cart.Id;
+
+                Product product = await _productRepository.GetProductByIdAsync(productId)
+                    ?? throw new NotFoundProductException(productId);
+
+                Item existingItem = await _itemRepository.GetItemAsync(cartId, productId)
+                    ?? throw new NotFoundItemException();
+
+                if (quantity > product.Stock)
+                    throw new BadRequestProductOutOfStockException();
+
+                cart.TotalPrice -= existingItem.Quantity * product.Price;
+
+                if (cart.TotalPrice < 0)
+                    cart.TotalPrice = 0;
+
+                product.Stock += existingItem.Quantity;
+
+                existingItem.Quantity = quantity;
+
+                _context.Entry(existingItem).Property(i => i.Quantity).IsModified = true;
+
+                //update total price
+                cart.IncreaseTotalPrice(existingItem.Quantity, product.Price);
+
+                _context.Attach(cart);
+                _context.Entry(cart).Property(o => o.TotalPrice).IsModified = true;
+
+                //update product stock
+                product.Stock -= existingItem.Quantity;
+
+                _context.Attach(product);
+                _context.Entry(product).Property(p => p.Stock).IsModified = true;
+
+                await _context.SaveChangesAsync();
+
+                await transaction.CommitAsync();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}, Inner: {ex.InnerException?.Message}");
+                await transaction.RollbackAsync();
+                throw;
+            }
+            
         }
     }
 }

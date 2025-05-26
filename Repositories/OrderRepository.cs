@@ -25,6 +25,21 @@ namespace Repositories
                 .FirstAsync(o => o.UserId == customerId
                               && o.IsCart == true);
         }
+        
+        public async Task<Order> GetCartWithoutItemsByCustomerIdAsync(string customerId, bool tracking = false)
+        {
+            if (!tracking)
+            {
+                return await _context.Orders
+                .AsNoTracking()
+                .FirstAsync(o => o.UserId == customerId
+                              && o.IsCart);
+            }
+
+            return await _context.Orders
+                .FirstAsync(o => o.UserId == customerId
+                              && o.IsCart);
+        }
 
         public async Task<Order?> GetOrderByIdAsync(Guid id, bool tracking = false)
         {
