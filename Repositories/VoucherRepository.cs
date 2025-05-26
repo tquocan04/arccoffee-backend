@@ -21,5 +21,18 @@ namespace Repositories
                 .AsNoTracking()
                 .ToListAsync();
         }
+
+        public async Task<bool> CheckCodeVoucherAsync(string code)
+        {
+            return await _context.Vouchers
+                .AnyAsync(v => v.Code.ToUpper() == code.ToUpper());
+        }
+
+        public async Task<bool> CheckCodeVoucherByIdAsync(Guid id, string code)
+        {
+            return await _context.Vouchers
+                .AnyAsync(v => v.Code.ToUpper() == code.ToUpper()
+                                && v.Id != id);
+        }
     }
 }
