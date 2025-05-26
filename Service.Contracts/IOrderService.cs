@@ -1,4 +1,5 @@
 ﻿using DTOs;
+using DTOs.Requests;
 
 namespace Service.Contracts
 {
@@ -7,5 +8,6 @@ namespace Service.Contracts
         Task<CartDTO> GetCartAsync(string email);
         Task AddToCartAsync(string id, Guid productId);
         Task DeleteItemInCartAsync(string id, Guid productId);
+        Task<CartDTO> MergeCartFromClientAsync(string customerId, List<ItemRequest> req);
     }
 }
