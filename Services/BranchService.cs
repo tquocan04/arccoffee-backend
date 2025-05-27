@@ -89,5 +89,15 @@ namespace Services
 
             return result;
         }
+
+        public async Task DeleteBranchAsync(Guid id)
+        {
+            var branch = await branchRepository.GetBranchByIdAsync(id)
+                ?? throw new NotFoundBranchException();
+
+            branchRepository.Delete(branch);
+
+            await branchRepository.Save();
+        }
     }
 }

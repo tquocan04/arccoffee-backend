@@ -47,5 +47,14 @@ namespace ArcCoffee_backend.Controllers
                 Data = result
             });
         }
+
+        [Authorize(Policy = "AdminAndStaffOnly")]
+        [HttpDelete("{id:guid}")]
+        public async Task<IActionResult> DeleteBranch(Guid id)
+        {
+            await branchService.DeleteBranchAsync(id);
+
+            return NoContent();
+        }
     }
 }
