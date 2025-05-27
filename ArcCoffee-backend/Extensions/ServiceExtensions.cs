@@ -19,7 +19,7 @@ namespace ArcCoffee_backend.Extensions
     {
         public static IServiceCollection ConfigureDatabase(this IServiceCollection services)
         {
-            var connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
+            var connectionString = Environment.GetEnvironmentVariable("DATABASE_CONNECTION");
             if (string.IsNullOrEmpty(connectionString))
             {
                 throw new InvalidOperationException("Database connection string is missing.");

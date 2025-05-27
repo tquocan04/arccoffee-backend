@@ -1,12 +1,15 @@
 ﻿using ArcCoffee_backend.Extensions;
 using DotNetEnv;
+using Entities.Context;
 using Mapster;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Services.Extensions;
+using System;
 
 var builder = WebApplication.CreateBuilder(args);
 
-Env.Load();
+Env.Load("/app/.env");
 
 builder.Services.ConfigureDatabase();
 
@@ -70,5 +73,23 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var context = services.GetRequiredService<Context>();
+    try
+    {
+        if (context.Database.GetPendingMigrations().Any())
+        {
+            Console.WriteLine("Applying pending migrations...");
+            context.Database.Migrate();
+        }
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Migration failed: {ex.Message}");
+    }
+}
 
 app.Run();

@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DTOs", "DTOs\DTOs.csproj", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExceptionHandler", "ExceptionHandler\ExceptionHandler.csproj", "{8CBB5297-33F7-4D0B-B9CE-39867431BE2F}"
 EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{FB10ECF7-3766-4744-8208-D7D1507ACB1F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -57,6 +59,10 @@ Global
 		{8CBB5297-33F7-4D0B-B9CE-39867431BE2F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8CBB5297-33F7-4D0B-B9CE-39867431BE2F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8CBB5297-33F7-4D0B-B9CE-39867431BE2F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FB10ECF7-3766-4744-8208-D7D1507ACB1F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FB10ECF7-3766-4744-8208-D7D1507ACB1F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FB10ECF7-3766-4744-8208-D7D1507ACB1F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FB10ECF7-3766-4744-8208-D7D1507ACB1F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

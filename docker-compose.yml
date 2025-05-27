@@ -1,0 +1,56 @@
+services:
+  arccoffee-backend:
+    image: ${DOCKER_REGISTRY-}arccoffeebackend
+    build:
+      context: .
+      dockerfile: ArcCoffee-backend/Dockerfile
+    container_name: api_arc
+    environment:
+      ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENV}
+      ASPNETCORE_URLS: "http://+:${APP_INTERNAL_PORT}"
+      DatabaseSettings__DefaultConnection: ${DATABASE_CONNECTION}
+    ports:
+      - "${APP_PORT}:${APP_INTERNAL_PORT}"
+    depends_on:
+      - sqlserver_arc
+    networks:
+      - arcnetwork
+    volumes:
+      - ./.env:/app/.env:ro
+    restart: always
+
+  sqlserver_arc:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sqlserver_arc
+    environment:
+      MSSQL_SA_PASSWORD: ${MSSQL_SA_PASSWORD}
+      ACCEPT_EULA: "Y"
+    ports:
+      - "${SQLSERVER_PORT}:${DATABASE_PORT}"
+    networks:
+      - arcnetwork
+    volumes:
+      - sql_data_arc:/var/opt/mssql
+    restart: always
+
+  nginx_arc:
+    image: nginx:latest
+    container_name: nginx_arc
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    command: nginx -g 'daemon off;'
+    ports:
+      - "${NGINX_HTTP_PORT}:80"
+    depends_on:
+      - arccoffee-backend
+    networks:
+      - arcnetwork
+    restart: always
+
+networks:
+  arcnetwork:
+    external: true
+
+volumes:
+  sql_data_arc:
+    name: sql_data_arc
