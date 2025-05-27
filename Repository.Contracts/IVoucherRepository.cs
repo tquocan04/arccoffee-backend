@@ -7,5 +7,6 @@ namespace Repository.Contracts
         Task<IEnumerable<Voucher>> GetVoucherListAsync(bool tracking = false);
         Task<bool> CheckCodeVoucherAsync(string code);
         Task<bool> CheckCodeVoucherByIdAsync(Guid id, string code);
+        Task<Voucher?> GetVoucherByCodeAsync(string code, bool tracking = false);
     }
 }

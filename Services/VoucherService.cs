@@ -10,8 +10,8 @@ using Service.Contracts;
 namespace Services
 {
     public class VoucherService(IMapper mapper,
-        IVoucherRepository voucherRepository,
-        IUserRepository userRepository) : IVoucherService
+        IVoucherRepository voucherRepository) 
+        : IVoucherService
     {
         public async Task<IEnumerable<VoucherDTO>> GetVoucherListAsync()
         {
@@ -32,14 +32,12 @@ namespace Services
                 throw new BadRequestVoucherCodeAlreadyExistsException();
             }
 
-            if (!userRepository.CheckValidDob(req.Day, req.Month, req.Year))
-            {
-                throw new BadRequestInvalidDateException();
-            }
-
             Voucher voucher = mapper.Map<Voucher>(req);
 
             voucher.ExpiryDate = new DateOnly(req.Year, req.Month, req.Day);
+
+            if (!voucher.IsValidExpireDate())
+                throw new BadRequestInvalidExpiredDateException();
 
             await voucherRepository.Create(voucher);
 
@@ -48,6 +46,20 @@ namespace Services
             VoucherDTO result = mapper.Map<VoucherDTO>(voucher);
 
             return result;
+        }
+
+        public async Task<VoucherDTO> GetVoucherByCodeAsync(string code)
+        {
+            Voucher voucher = await voucherRepository.GetVoucherByCodeAsync(code)
+                ?? throw new NotFoundVoucherByCodeException(code);
+
+            if (!voucher.IsValidExpireDate())
+                throw new BadRequestInvalidExpiredDateException();
+
+            if (voucher.Quantity <= 0)
+                throw new BadRequestVoucherIsOutOfStockException();
+
+            return mapper.Map<VoucherDTO>(voucher);
         }
     }
 }

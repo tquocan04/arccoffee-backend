@@ -7,5 +7,6 @@ namespace Service.Contracts
     {
         Task<IEnumerable<VoucherDTO>> GetVoucherListAsync();
         Task<VoucherDTO> CreateNewVoucherAsync(CreateVoucherRequest req);
+        Task<VoucherDTO> GetVoucherByCodeAsync(string code);
     }
 }

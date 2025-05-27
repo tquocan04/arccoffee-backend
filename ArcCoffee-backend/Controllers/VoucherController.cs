@@ -1,6 +1,7 @@
 ﻿using DTOs;
 using DTOs.Requests;
 using DTOs.Responses;
+using Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service.Contracts;
@@ -36,6 +37,25 @@ namespace ArcCoffee_backend.Controllers
                     Message = "Create successfully.",
                     Data = result
                 });
+        }
+
+        [HttpGet("detail")]
+        [Authorize(Policy = "All")]
+        public async Task<IActionResult> GetVoucherByCode([FromQuery] string code)
+        {
+            if (string.IsNullOrWhiteSpace(code))
+                return BadRequest(new Response<string>
+                {
+                    Message = "Code is null."
+                });
+
+            var result = await service.GetVoucherByCodeAsync(code);
+
+            return Ok(new Response<VoucherDTO>
+            {
+                Message = "Successful.",
+                Data = result
+            });
         }
 
         [HttpGet("public")]

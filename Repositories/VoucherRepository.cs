@@ -34,5 +34,12 @@ namespace Repositories
                 .AnyAsync(v => v.Code.ToUpper() == code.ToUpper()
                                 && v.Id != id);
         }
+
+        public async Task<Voucher?> GetVoucherByCodeAsync(string code, bool tracking = false)
+        {
+            IQueryable<Voucher> query = tracking ? _context.Vouchers : _context.Vouchers.AsNoTracking();
+
+            return await query.FirstOrDefaultAsync(v => v.Code.ToUpper() == code.ToUpper());
+        }
     }
 }
