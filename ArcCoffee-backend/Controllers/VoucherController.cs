@@ -5,6 +5,8 @@ using Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service.Contracts;
+using Services;
+using Sprache;
 
 namespace ArcCoffee_backend.Controllers
 {
@@ -64,6 +66,18 @@ namespace ArcCoffee_backend.Controllers
             var result = await service.GetVoucherListAsync();
 
             return Ok(new Response<IEnumerable<VoucherDTO>>
+            {
+                Message = "Successful.",
+                Data = result
+            });
+        }
+
+        [HttpPut("{id:guid}")]
+        public async Task<IActionResult> UpdateVoucher(Guid id, [FromBody] CreateVoucherRequest req)
+        {
+            var result = await service.UpdateVoucherAsync(id, req);
+
+            return Ok(new Response<CreateVoucherRequest>
             {
                 Message = "Successful.",
                 Data = result

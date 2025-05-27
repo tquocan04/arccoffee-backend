@@ -61,5 +61,24 @@ namespace Services
 
             return mapper.Map<VoucherDTO>(voucher);
         }
+
+        public async Task<CreateVoucherRequest> UpdateVoucherAsync(Guid id, CreateVoucherRequest req)
+        {
+            if (await voucherRepository.CheckCodeVoucherByIdAsync(id, req.Code))
+                throw new NotFoundVoucherByCodeException(req.Code);
+
+            Voucher voucher = mapper.Map<Voucher>(req);
+            voucher.Id = id;
+
+            voucher.ExpiryDate = new DateOnly(req.Year, req.Month, req.Day);
+
+            if (!voucher.IsValidExpireDate())
+                throw new BadRequestInvalidExpiredDateException();
+
+            voucherRepository.Update(voucher);
+            await voucherRepository.Save();
+
+            return req;
+        }
     }
 }
