@@ -4,7 +4,6 @@ using DTOs.Responses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service.Contracts;
-using Sprache;
 using System.Security.Claims;
 
 namespace ArcCoffee_backend.Controllers
@@ -13,19 +12,41 @@ namespace ArcCoffee_backend.Controllers
     [ApiController]
     public class ArcController(IUserService userService) : ControllerBase
     {
+        /// <summary>
+        /// TẠO TÀI KHOẢN STAFF: Tạo tài khoàn cho nhân viên mới. Yêu cầu token Admin.
+        /// </summary>
+        /// <remarks>
+        /// Cần điền đầy đủ thông tin.
+        /// </remarks>
+        /// <response code="201">Nhân viên mới được tạo thành công.</response>
+        /// <response code="400">Email đã tồn tại.</response>
+        /// <response code="400">Ngày sinh không hợp lệ. Yêu cầu ngày sinh phải trước ngày hiện tại.</response>
+        /// <response code="404">Branch của nhân viên không tồn tại.</response>
+        /// <response code="500">Đã có lỗi trong quá trình tạo nhân viên.</response>
         [Authorize(Policy = "AdminOnly")]
         [HttpPost]
         public async Task<IActionResult> CreateNewStaff([FromBody] CreateStaffRequest req)
         {
             var result = await userService.CreateNewStaffAsync(req);
 
-            return Ok(new Response<StaffDTO>
-            {
-                Message = "Successful.",
-                Data = result
-            });
+            return CreatedAtAction(nameof(GetStaffProfile),
+                new { id = result.Id },
+                new Response<StaffDTO>
+                {
+                    Message = "Successful.",
+                    Data = result
+                });
         }
-        
+
+        /// <summary>
+        /// LẤY THÔNG TIN NHÂN VIÊN: Lấy thông tin của nhân viên. Yêu cầu token Staff.
+        /// </summary>
+        /// <response code="200">Thông tin được lấy thành công.</response>
+        /// <response code="401">Thông tin xác thực thất bại.</response>
+        /// <response code="403">Quyền xác thực không đúng.</response>
+        /// <response code="404">Nhân viên không tồn tại.</response>
+        /// <response code="404">Thông tin chi nhánh của nhân viên không tồn tại hoặc đang bị rỗng.</response>
+        /// <response code="500">Đã có lỗi trong quá trình lấy thông tin.</response>
         [Authorize(Policy = "StaffOnly")]
         [HttpGet]
         public async Task<IActionResult> GetStaffProfile()
@@ -49,6 +70,19 @@ namespace ArcCoffee_backend.Controllers
             });
         }
 
+        /// <summary>
+        /// CẬP NHẬT THÔNG TIN: Nhân viên cập nhật thông tin. Yêu cầu token Staff.
+        /// </summary>
+        /// <remarks>
+        /// Email phải giữ nguyên không được thay đổi. Password không được để trống, nhưng cũng sẽ không cập nhật password ở api này (cập nhật tại api/authentication/password).
+        /// </remarks>
+        /// <response code="200">Thông tin được cập nhật thành công.</response>
+        /// <response code="401">Thông tin xác thực thất bại.</response>
+        /// <response code="403">Quyền xác thực không đúng.</response>
+        /// <response code="400">Email đã bị thay đổi.</response>
+        /// <response code="404">Nhân viên không tồn tại.</response>
+        /// <response code="404">Thông tin chi nhánh của nhân viên không tồn tại hoặc đang bị rỗng.</response>
+        /// <response code="500">Đã có lỗi trong quá trình cập nhật thông tin.</response>
         [HttpPut]
         [Authorize(Policy = "StaffOnly")]
         public async Task<IActionResult> UpdateStaffProfile([FromBody] CreateStaffRequest req)
@@ -79,6 +113,14 @@ namespace ArcCoffee_backend.Controllers
             });
         }
 
+        /// <summary>
+        /// XÓA NHÂN VIÊN: Nhân viên tự xóa. Yêu cầu token Staff.
+        /// </summary>
+        /// <response code="204">Xóa thành công.</response>
+        /// <response code="401">Thông tin xác thực thất bại.</response>
+        /// <response code="403">Quyền xác thực không đúng.</response>
+        /// <response code="404">Nhân viên không tồn tại.</response>
+        /// <response code="500">Đã có lỗi trong quá trình xóa.</response>
         [Authorize(Policy = "StaffOnly")]
         [HttpDelete]
         public async Task<IActionResult> DeleteStaff()
