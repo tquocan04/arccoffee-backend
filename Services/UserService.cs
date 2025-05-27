@@ -52,6 +52,39 @@ namespace Services
             _cloudinary = cloudinary;
         }
 
+        private async Task<CustomerResponse> CreateAddressAndOrderAsync<T>(T req, User user) where T : class
+        {
+            Address address = new()
+            {
+                Id = Guid.NewGuid(),
+                UserId = user.Id,
+                IsDefault = true,
+            };
+            _mapper.Map(req, address);
+            
+            Order order = new()
+            {
+                Id = Guid.NewGuid(),
+                UserId = user.Id,
+                TotalPrice = 0,
+            };
+
+            var addressTask = _addressRepository.Create(address);
+            var orderTask = _orderRepository.Create(order);
+            await Task.WhenAll(addressTask, orderTask);
+
+            CustomerResponse response = new()
+            {
+                Id = user.Id,
+                Picture = user.Picture,
+                OrderId = order.Id,
+            };
+
+            _mapper.Map(req, response);
+
+            return response;
+        }
+
         public async Task<CustomerResponse> SignUpGoogleAsync(SignupGoogleRequest req)
         {
             User? user = await _userManager.FindByEmailAsync(req.Email);
@@ -76,42 +109,13 @@ namespace Services
                 if (result.Succeeded)
                 {
                     await _userManager.AddToRoleAsync(user, "Customer");
-                    Console.WriteLine("Successful.");
                 }
 
-                Address address = new()
-                {
-                    Id = Guid.NewGuid(),
-                    UserId = user.Id,
-                    IsDefault = true,
-                };
-
-                _mapper.Map(req, address);
-
-                Order order = new()
-                {
-                    Id = Guid.NewGuid(),
-                    UserId = user.Id,
-                    TotalPrice = 0,
-                };
-
-                var addressTask = _addressRepository.Create(address);
-                var orderTask = _orderRepository.Create(order);
-
-                await Task.WhenAll(addressTask, orderTask);
+                var response = await CreateAddressAndOrderAsync<SignupGoogleRequest>(req, user);
 
                 await _context.SaveChangesAsync();
 
                 await transaction.CommitAsync();
-
-                CustomerResponse response = new()
-                {
-                    Id = user.Id,
-                    Picture = user.Picture,
-                    OrderId = order.Id,
-                };
-
-                _mapper.Map(req, response);
                 
                 return response;
             }
@@ -155,39 +159,11 @@ namespace Services
                     await _userManager.AddToRoleAsync(user, "Customer");
                 }
 
-                Address address = new()
-                {
-                    Id = Guid.NewGuid(),
-                    UserId = user.Id,
-                    IsDefault = true,
-                };
-
-                _mapper.Map(req, address);
-
-                Order order = new()
-                {
-                    Id = Guid.NewGuid(),
-                    UserId = user.Id,
-                    TotalPrice = 0,
-                };
-
-                var addressTask = _addressRepository.Create(address);
-                var orderTask = _orderRepository.Create(order);
-
-                await Task.WhenAll(addressTask, orderTask);
+                var response = await CreateAddressAndOrderAsync<RegisterRequest>(req, user);
 
                 await _context.SaveChangesAsync();
 
                 await transaction.CommitAsync();
-
-                CustomerResponse response = new()
-                {
-                    Id = user.Id,
-                    Picture = user.Picture,
-                    OrderId = order.Id,
-                };
-
-                _mapper.Map(req, response);
 
                 return response;
             }
