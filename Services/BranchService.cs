@@ -2,6 +2,7 @@
 using DTOs.Requests;
 using Entities;
 using Entities.Context;
+using ExceptionHandler.General;
 using MapsterMapper;
 using Repository.Contracts;
 using Service.Contracts;
@@ -55,6 +56,25 @@ namespace Services
                 await transaction.RollbackAsync();
                 throw;
             }
+        }
+
+        public async Task<IList<BranchDTO>> GetBranchListAsync()
+        {
+            var branches = await branchRepository.GetBranchListAsync();
+
+            if (branches == null || !branches.Any())
+                throw new NotFoundListException();
+
+            var result = mapper.Map<IList<BranchDTO>>(branches);
+
+            var length = result.Count;
+
+            for (int i = 0; i < length; i++)
+            {
+                result[i] = await addressService.SetAddressAsync(result[i], result[i].Id);
+            }
+
+            return result;
         }
     }
 }

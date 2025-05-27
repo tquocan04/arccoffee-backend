@@ -9,15 +9,27 @@ namespace ArcCoffee_backend.Controllers
 {
     [Route("api/branches")]
     [ApiController]
-    [Authorize(Policy = "AdminAndStaffOnly")]
     public class BranchController(IBranchService branchService) : ControllerBase
     {
+        [Authorize(Policy = "AdminAndStaffOnly")]
         [HttpPost]
         public async Task<IActionResult> CreateNewBranch([FromBody] CreateBranchRequest req)
         {
             var result = await branchService.CreateNewBranchAsync(req);
 
             return Ok(new Response<BranchDTO>
+            {
+                Message = "Successful.",
+                Data = result
+            });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetBranchList()
+        {
+            var result = await branchService.GetBranchListAsync();
+
+            return Ok(new Response<IList<BranchDTO>>
             {
                 Message = "Successful.",
                 Data = result

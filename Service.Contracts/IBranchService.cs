@@ -6,5 +6,6 @@ namespace Service.Contracts
     public interface IBranchService
     {
         Task<BranchDTO> CreateNewBranchAsync(CreateBranchRequest req);
+        Task<IList<BranchDTO>> GetBranchListAsync();
     }
 }
