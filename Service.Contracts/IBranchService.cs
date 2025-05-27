@@ -9,5 +9,6 @@ namespace Service.Contracts
         Task<IList<BranchDTO>> GetBranchListAsync();
         Task<BranchDTO> GetBranchByIdAsync(Guid id);
         Task DeleteBranchAsync(Guid id);
+        Task UpdateBranchAsync(Guid id, CreateBranchRequest req);
     }
 }

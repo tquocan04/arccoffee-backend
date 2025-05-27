@@ -56,5 +56,14 @@ namespace ArcCoffee_backend.Controllers
 
             return NoContent();
         }
+        
+        [Authorize(Policy = "AdminAndStaffOnly")]
+        [HttpPut("{id:guid}")]
+        public async Task<IActionResult> UpdateBranch(Guid id, [FromBody] CreateBranchRequest req)
+        {
+            await branchService.UpdateBranchAsync(id, req);
+
+            return NoContent();
+        }
     }
 }

@@ -2,6 +2,7 @@
 using DTOs.Requests;
 using Entities;
 using Entities.Context;
+using ExceptionHandler.Address;
 using ExceptionHandler.Branch;
 using ExceptionHandler.General;
 using MapsterMapper;
@@ -98,6 +99,39 @@ namespace Services
             branchRepository.Delete(branch);
 
             await branchRepository.Save();
+        }
+        
+        public async Task UpdateBranchAsync(Guid id, CreateBranchRequest req)
+        {
+            var branch = await branchRepository.GetBranchByIdAsync(id)
+                ?? throw new NotFoundBranchException();
+
+            using var transaction = await context.Database.BeginTransactionAsync();
+            try
+            {
+                mapper.Map(req, branch);
+
+                branchRepository.Update(branch);
+
+                var existingAddress = await addressRepository.GetAddressByObjectIdAsync(id)
+                    ?? throw new NotFoundAddressException(id);
+
+                if (existingAddress.DistrictId != req.DistrictId || existingAddress.Street != req.Street)
+                {
+                    mapper.Map(req, existingAddress);
+                    addressRepository.Update(existingAddress);
+                }
+
+                await context.SaveChangesAsync();
+
+                await transaction.CommitAsync();
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
+            
         }
     }
 }
