@@ -35,5 +35,17 @@ namespace ArcCoffee_backend.Controllers
                 Data = result
             });
         }
+        
+        [HttpGet("{id:guid}")]
+        public async Task<IActionResult> GetBranchDetail(Guid id)
+        {
+            var result = await branchService.GetBranchByIdAsync(id);
+
+            return Ok(new Response<BranchDTO>
+            {
+                Message = "Successful.",
+                Data = result
+            });
+        }
     }
 }

@@ -2,6 +2,7 @@
 using DTOs.Requests;
 using Entities;
 using Entities.Context;
+using ExceptionHandler.Branch;
 using ExceptionHandler.General;
 using MapsterMapper;
 using Repository.Contracts;
@@ -73,6 +74,18 @@ namespace Services
             {
                 result[i] = await addressService.SetAddressAsync(result[i], result[i].Id);
             }
+
+            return result;
+        }
+
+        public async Task<BranchDTO> GetBranchByIdAsync(Guid id)
+        {
+            var branch = await branchRepository.GetBranchByIdAsync(id)
+                ?? throw new NotFoundBranchException();
+
+            var result = mapper.Map<BranchDTO>(branch);
+
+            result = await addressService.SetAddressAsync(result, branch.Id);
 
             return result;
         }

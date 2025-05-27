@@ -15,5 +15,12 @@ namespace Repositories
 
             return await query.ToListAsync();
         }
+        
+        public async Task<Branch?> GetBranchByIdAsync(Guid id, bool tracking = false)
+        {
+            var query = tracking ? _context.Branches : _context.Branches.AsNoTracking();
+
+            return await query.FirstOrDefaultAsync(b => b.Id == id);
+        }
     }
 }
