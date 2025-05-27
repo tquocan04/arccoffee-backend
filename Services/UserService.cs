@@ -385,5 +385,13 @@ namespace Services
 
             return result;
         }
+
+        public async Task DeleteStaffAsync(string email)
+        {
+            User? user = await _userManager.FindByEmailAsync(email)
+                ?? throw new NotFoundUserByEmailException(email);
+
+            await _userManager.DeleteAsync(user);
+        }
     }
 }

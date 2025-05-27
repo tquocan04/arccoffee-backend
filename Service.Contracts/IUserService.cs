@@ -14,5 +14,6 @@ namespace Service.Contracts
         Task<CustomerResponse> SignUpGoogleAsync(SignupGoogleRequest req);
         Task<StaffDTO> CreateNewStaffAsync(CreateStaffRequest req);
         Task<StaffDTO> GetStaffProfileAsync(string email);
+        Task DeleteStaffAsync(string email);
     }
 }

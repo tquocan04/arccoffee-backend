@@ -47,5 +47,24 @@ namespace ArcCoffee_backend.Controllers
                 Data = result
             });
         }
+
+        [Authorize(Policy = "StaffOnly")]
+        [HttpDelete]
+        public async Task<IActionResult> DeleteStaff()
+        {
+            string? email = User.FindFirst(ClaimTypes.Name)?.Value;
+
+            if (string.IsNullOrEmpty(email))
+            {
+                return Unauthorized(new Response<string>
+                {
+                    Message = "Unable to authenticate user"
+                });
+            }
+
+            await userService.DeleteStaffAsync(email);
+
+            return NoContent();
+        }
     }
 }
