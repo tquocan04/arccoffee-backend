@@ -19,8 +19,7 @@ namespace ArcCoffee_backend.Controllers
         /// Cần điền đầy đủ thông tin.
         /// </remarks>
         /// <response code="201">Nhân viên mới được tạo thành công.</response>
-        /// <response code="400">Email đã tồn tại.</response>
-        /// <response code="400">Ngày sinh không hợp lệ. Yêu cầu ngày sinh phải trước ngày hiện tại.</response>
+        /// <response code="400">Email đã tồn tại. || Ngày sinh không hợp lệ. Yêu cầu ngày sinh phải trước ngày hiện tại.</response>
         /// <response code="404">Branch của nhân viên không tồn tại.</response>
         /// <response code="500">Đã có lỗi trong quá trình tạo nhân viên.</response>
         [Authorize(Policy = "AdminOnly")]
@@ -44,8 +43,7 @@ namespace ArcCoffee_backend.Controllers
         /// <response code="200">Thông tin được lấy thành công.</response>
         /// <response code="401">Thông tin xác thực thất bại.</response>
         /// <response code="403">Quyền xác thực không đúng.</response>
-        /// <response code="404">Nhân viên không tồn tại.</response>
-        /// <response code="404">Thông tin chi nhánh của nhân viên không tồn tại hoặc đang bị rỗng.</response>
+        /// <response code="404">Nhân viên không tồn tại. || Thông tin chi nhánh của nhân viên không tồn tại hoặc đang bị rỗng.</response>
         /// <response code="500">Đã có lỗi trong quá trình lấy thông tin.</response>
         [Authorize(Policy = "StaffOnly")]
         [HttpGet]
@@ -80,8 +78,7 @@ namespace ArcCoffee_backend.Controllers
         /// <response code="401">Thông tin xác thực thất bại.</response>
         /// <response code="403">Quyền xác thực không đúng.</response>
         /// <response code="400">Email đã bị thay đổi.</response>
-        /// <response code="404">Nhân viên không tồn tại.</response>
-        /// <response code="404">Thông tin chi nhánh của nhân viên không tồn tại hoặc đang bị rỗng.</response>
+        /// <response code="404">Nhân viên không tồn tại. || Thông tin chi nhánh của nhân viên không tồn tại hoặc đang bị rỗng.</response>
         /// <response code="500">Đã có lỗi trong quá trình cập nhật thông tin.</response>
         [HttpPut]
         [Authorize(Policy = "StaffOnly")]
