@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Service.Contracts;
-using Sprache;
 using System.Security.Claims;
 
 namespace ArcCoffee_backend.Controllers
@@ -18,10 +17,24 @@ namespace ArcCoffee_backend.Controllers
         private readonly IUserService _userService;
         private readonly UserManager<User> _userManager;
 
-        public AuthenticationController(IUserService userService, UserManager<User> userManager) 
+        public AuthenticationController(IUserService userService, UserManager<User> userManager)
         {
             _userService = userService;
             _userManager = userManager;
+        }
+
+        [HttpPost("google")]
+        public async Task<IActionResult> SignUpGoogle([FromBody] SignupGoogleRequest req)
+        {
+            var result = await _userService.SignUpGoogleAsync(req);
+
+            return CreatedAtAction(nameof(GetProfile),
+                new { id = result.Id },
+                new Response<CustomerResponse>
+                {
+                    Message = "Successful.",
+                    Data = result
+                });
         }
 
         [HttpPost]
@@ -29,13 +42,15 @@ namespace ArcCoffee_backend.Controllers
         {
             var result = await _userService.CreateNewCustomerAsync(req);
 
-            return Ok(new Response<CustomerResponse>
-            {
-                Message = "Successful.",
-                Data = result
-            });
+            return CreatedAtAction(nameof(GetProfile),
+                new { id = result.Id },
+                new Response<CustomerResponse>
+                {
+                    Message = "Successful.",
+                    Data = result
+                });
         }
-        
+
         [Authorize(Policy = "CustomerOnly")]
         [HttpGet]
         public async Task<IActionResult> GetProfile()
@@ -58,7 +73,7 @@ namespace ArcCoffee_backend.Controllers
                 Data = result
             });
         }
-        
+
         [Authorize(Policy = "CustomerOnly")]
         [HttpPut]
         public async Task<IActionResult> UpdateProfile([FromForm] UpdateUserRequest req)
@@ -87,7 +102,7 @@ namespace ArcCoffee_backend.Controllers
         {
             var result = await _userManager.FindByEmailAsync(email);
 
-            if (result == null) 
+            if (result == null)
             {
                 return BadRequest(new Response<string>
                 {

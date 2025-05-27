@@ -52,6 +52,77 @@ namespace Services
             _cloudinary = cloudinary;
         }
 
+        public async Task<CustomerResponse> SignUpGoogleAsync(SignupGoogleRequest req)
+        {
+            User? user = await _userManager.FindByEmailAsync(req.Email);
+
+            if (user != null)
+                throw new BadRequestUserExistsByEmailException(req.Email);
+
+            if (!_userRepository.CheckValidDob(req.Day, req.Month, req.Year))
+                throw new BadRequestInvalidDobException();
+
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
+            {
+                user = _mapper.Map<User>(req);
+
+                user.Dob = new DateOnly(req.Year, req.Month, req.Day);
+                user.UserName = req.Email;
+                user.Id = Guid.NewGuid().ToString();
+
+                var result = await _userManager.CreateAsync(user, req.Password);
+
+                if (result.Succeeded)
+                {
+                    await _userManager.AddToRoleAsync(user, "Customer");
+                    Console.WriteLine("Successful.");
+                }
+
+                Address address = new()
+                {
+                    Id = Guid.NewGuid(),
+                    UserId = user.Id,
+                    IsDefault = true,
+                };
+
+                _mapper.Map(req, address);
+
+                Order order = new()
+                {
+                    Id = Guid.NewGuid(),
+                    UserId = user.Id,
+                    TotalPrice = 0,
+                };
+
+                var addressTask = _addressRepository.Create(address);
+                var orderTask = _orderRepository.Create(order);
+
+                await Task.WhenAll(addressTask, orderTask);
+
+                await _context.SaveChangesAsync();
+
+                await transaction.CommitAsync();
+
+                CustomerResponse response = new()
+                {
+                    Id = user.Id,
+                    Picture = user.Picture,
+                    OrderId = order.Id,
+                };
+
+                _mapper.Map(req, response);
+                
+                return response;
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                Console.WriteLine(ex.Message);
+                throw;
+            }
+        }
+
         public async Task<CustomerResponse> CreateNewCustomerAsync(RegisterRequest req)
         {
             User? user = await _userManager.FindByEmailAsync(req.Email);
@@ -62,70 +133,70 @@ namespace Services
             if (!_userRepository.CheckValidDob(req.Day, req.Month, req.Year))
                 throw new BadRequestInvalidDobException();
 
-            using (var transaction = await _context.Database.BeginTransactionAsync())
-                try
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
+            {
+                user = _mapper.Map<User>(req);
+
+                if (req.Picture != null && req.Picture.Length != 0)
                 {
-                    user = _mapper.Map<User>(req);
-
-                    if (req.Picture != null && req.Picture.Length != 0)
-                    {
-                        var url = await _cloudinary.UploadImageCustomerAsync(req.Picture);
-                        user.Picture = url;
-                    }
-
-                    user.Dob = new DateOnly(req.Year, req.Month, req.Day);
-                    user.UserName = req.Email;
-                    user.Id = Guid.NewGuid().ToString();
-
-                    var result = await _userManager.CreateAsync(user, req.Password);
-
-                    if (result.Succeeded)
-                    {
-                        await _userManager.AddToRoleAsync(user, "Customer");
-                    }
-
-                    Address address = new()
-                    {
-                        Id = Guid.NewGuid(),
-                        UserId = user.Id,
-                        IsDefault = true,
-                    };
-
-                    _mapper.Map(req, address);
-
-                    Order order = new()
-                    {
-                        Id = Guid.NewGuid(),
-                        UserId = user.Id,
-                        TotalPrice = 0,
-                    };
-
-                    var addressTask = _addressRepository.Create(address);
-                    var orderTask = _orderRepository.Create(order);
-
-                    await Task.WhenAll(addressTask, orderTask);
-
-                    await _context.SaveChangesAsync();
-
-                    await transaction.CommitAsync();
-
-                    CustomerResponse response = new()
-                    {
-                        Id = user.Id,
-                        Picture = user.Picture,
-                        OrderId = order.Id,
-                    };
-
-                    _mapper.Map(req, response);
-
-                    return response;
+                    var url = await _cloudinary.UploadImageCustomerAsync(req.Picture);
+                    user.Picture = url;
                 }
-                catch (Exception ex)
+
+                user.Dob = new DateOnly(req.Year, req.Month, req.Day);
+                user.UserName = req.Email;
+                user.Id = Guid.NewGuid().ToString();
+
+                var result = await _userManager.CreateAsync(user, req.Password);
+
+                if (result.Succeeded)
                 {
-                    await transaction.RollbackAsync();
-                    Console.WriteLine(ex.Message);
-                    throw;
+                    await _userManager.AddToRoleAsync(user, "Customer");
                 }
+
+                Address address = new()
+                {
+                    Id = Guid.NewGuid(),
+                    UserId = user.Id,
+                    IsDefault = true,
+                };
+
+                _mapper.Map(req, address);
+
+                Order order = new()
+                {
+                    Id = Guid.NewGuid(),
+                    UserId = user.Id,
+                    TotalPrice = 0,
+                };
+
+                var addressTask = _addressRepository.Create(address);
+                var orderTask = _orderRepository.Create(order);
+
+                await Task.WhenAll(addressTask, orderTask);
+
+                await _context.SaveChangesAsync();
+
+                await transaction.CommitAsync();
+
+                CustomerResponse response = new()
+                {
+                    Id = user.Id,
+                    Picture = user.Picture,
+                    OrderId = order.Id,
+                };
+
+                _mapper.Map(req, response);
+
+                return response;
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                Console.WriteLine(ex.Message);
+                throw;
+            }
         }
 
         public async Task<(string?, string?)> LoginAsync(LoginRequest req)
