@@ -5,7 +5,7 @@ using Mapster;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Services.Extensions;
-using System;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -54,6 +54,13 @@ builder.Services.AddSwaggerGen(c =>
                 Array.Empty<string>()
             }
         });
+
+    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    if (File.Exists(xmlPath))
+    {
+        c.IncludeXmlComments(xmlPath);
+    }
 });
 
 var app = builder.Build();

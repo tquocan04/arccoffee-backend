@@ -11,19 +11,15 @@ namespace ArcCoffee_backend.Controllers
     public class LoginController(IUserService userService) : ControllerBase
     {
         private readonly IUserService _userService = userService;
-
+        /// <summary>
+        /// ĐĂNG NHẬP: Đăng nhập với email và mật khẩu
+        /// </summary>
+        /// <response code="200">Người dùng đăng nhập thành công.</response>
+        /// <response code="400">Email hoặc mật khẩu sai.</response>
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest req)
         {
             var result = await _userService.LoginAsync(req);
-
-            if (result.Item1 == null && result.Item2 == null)
-            {
-                return BadRequest(new Response<string>
-                {
-                    Message = "Login failed."
-                });
-            }
 
             return Ok(new LoginResponse
             {

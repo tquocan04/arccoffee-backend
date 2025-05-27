@@ -189,15 +189,15 @@ namespace Services
             }
         }
 
-        public async Task<(string?, string?)> LoginAsync(LoginRequest req)
+        public async Task<(string, string?)> LoginAsync(LoginRequest req)
         {
             var user = await _userManager.FindByEmailAsync(req.Login)
-                ?? throw new NotFoundUserByEmailException(req.Login);
+                ?? throw new BadRequestLoginException();
 
             var login = await _signInManager.PasswordSignInAsync(user, req.Password, false, false);
 
             if (!login.Succeeded)
-                return (null, null);
+                throw new BadRequestLoginException();
 
             var role = (await _userManager.GetRolesAsync(user)).FirstOrDefault();
 
