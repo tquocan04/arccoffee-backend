@@ -1,6 +1,4 @@
-﻿using Entities;
-
-namespace DTOs
+﻿namespace DTOs
 {
     public class UserDTO
     {

@@ -47,6 +47,7 @@ namespace ArcCoffee_backend.Extensions
             services.AddScoped<IItemRepository, ItemRepository>();
             services.AddScoped<IPaymentRepository, PaymentRepository>();
             services.AddScoped<IVoucherRepository, VoucherRepository>();
+            services.AddScoped<IBranchRepository, BranchRepository>();
 
             return services;
         }
@@ -62,6 +63,7 @@ namespace ArcCoffee_backend.Extensions
             services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<IPaymentService, PaymentService>();
             services.AddScoped<IVoucherService, VoucherService>();
+            services.AddScoped<IBranchService, BranchService>();
 
             services.AddScoped(typeof(IAddressService<>), typeof(AddressService<>));
 
@@ -148,6 +150,8 @@ namespace ArcCoffee_backend.Extensions
                     policy.RequireRole("Staff"));
                 options.AddPolicy("AdminOnly", policy =>
                     policy.RequireRole("Admin"));
+                options.AddPolicy("AdminAndStaffOnly", policy =>
+                    policy.RequireRole("Admin", "Staff"));
 
             });
         }
