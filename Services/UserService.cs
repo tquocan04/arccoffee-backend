@@ -4,6 +4,7 @@ using DTOs.Responses;
 using Entities;
 using Entities.Context;
 using ExceptionHandler.Address;
+using ExceptionHandler.Branch;
 using ExceptionHandler.User;
 using MapsterMapper;
 using Microsoft.AspNetCore.Identity;
@@ -25,6 +26,8 @@ namespace Services
         private readonly ITokenService _tokenService;
         private readonly IAddressService<UserDTO> _addressService;
         private readonly IAddressService<UserUpdateDTO> _addressUpdateService;
+        private readonly IAddressService<StaffDTO> _addressStaffService;
+        private readonly IBranchRepository _branchRepository;
         private readonly CloudinaryService _cloudinary;
 
         public UserService(IMapper mapper,
@@ -37,6 +40,8 @@ namespace Services
             ITokenService tokenService,
             IAddressService<UserDTO> addressService,
             IAddressService<UserUpdateDTO> addressUpdateService,
+            IAddressService<StaffDTO> addressStaffService,
+            IBranchRepository branchRepository,
             CloudinaryService cloudinary)
         {
             _mapper = mapper;
@@ -49,10 +54,12 @@ namespace Services
             _tokenService = tokenService;
             _addressService = addressService;
             _addressUpdateService = addressUpdateService;
+            _addressStaffService = addressStaffService;
+            _branchRepository = branchRepository;
             _cloudinary = cloudinary;
         }
 
-        private async Task<CustomerResponse> CreateAddressAndOrderAsync<T>(T req, User user) where T : class
+        private async Task CreateAddressAsync<T>(T req, User user) where T : class
         {
             Address address = new()
             {
@@ -61,6 +68,13 @@ namespace Services
                 IsDefault = true,
             };
             _mapper.Map(req, address);
+
+            await _addressRepository.Create(address);
+        }
+
+        private async Task<CustomerResponse> CreateAddressAndOrderAsync<T>(T req, User user) where T : class
+        {
+            await CreateAddressAsync<T>(req, user);
             
             Order order = new()
             {
@@ -69,7 +83,7 @@ namespace Services
                 TotalPrice = 0,
             };
 
-            var addressTask = _addressRepository.Create(address);
+            var addressTask = CreateAddressAsync<T>(req, user);
             var orderTask = _orderRepository.Create(order);
             await Task.WhenAll(addressTask, orderTask);
 
@@ -286,6 +300,61 @@ namespace Services
 
             if (!result.Succeeded)
                 throw new BadRequestChangePasswordException();
+        }
+
+        public async Task<StaffDTO> CreateNewStaffAsync(CreateStaffRequest req)
+        {
+            User? user = await _userManager.FindByEmailAsync(req.Email);
+
+            if (user != null)
+                throw new BadRequestUserExistsByEmailException(req.Email);
+
+            if (!_userRepository.CheckValidDob(req.Day, req.Month, req.Year))
+                throw new BadRequestInvalidDobException();
+
+            Branch? branch = await _branchRepository.GetBranchByIdAsync(req.BranchId)
+                ?? throw new NotFoundBranchException();
+
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
+            {
+                user = _mapper.Map<User>(req);
+
+                user.Dob = new DateOnly(req.Year, req.Month, req.Day);
+                user.UserName = req.Email;
+                user.Id = Guid.NewGuid().ToString();
+
+                var result = await _userManager.CreateAsync(user, req.Password);
+
+                if (result.Succeeded)
+                {
+                    await _userManager.AddToRoleAsync(user, "Staff");
+                }
+
+                await CreateAddressAsync<CreateStaffRequest>(req, user);
+
+                var response = _mapper.Map<StaffDTO>(req);
+
+                await _context.SaveChangesAsync();
+
+                await transaction.CommitAsync();
+                
+                response = await _addressStaffService.SetAddressAsync(response, Guid.Parse(user.Id));
+                response.BranchName = branch.Name;
+                response.Id = user.Id;
+
+                var role = (await _userManager.GetRolesAsync(user)).FirstOrDefault();
+
+                response.Role = !string.IsNullOrEmpty(role) ? role : "Staff";
+
+                return response;
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                Console.WriteLine(ex.Message);
+                throw;
+            }
         }
     }
 }

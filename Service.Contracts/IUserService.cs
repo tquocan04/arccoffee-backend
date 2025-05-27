@@ -12,5 +12,6 @@ namespace Service.Contracts
         Task<UserUpdateDTO> UpdateUserAsync(string email, UpdateUserRequest req);
         Task ChangePasswordAsync(string email, ChangePasswordRequest req);
         Task<CustomerResponse> SignUpGoogleAsync(SignupGoogleRequest req);
+        Task<StaffDTO> CreateNewStaffAsync(CreateStaffRequest req);
     }
 }
