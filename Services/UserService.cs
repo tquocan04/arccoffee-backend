@@ -230,57 +230,57 @@ namespace Services
             if (!_userRepository.CheckValidDob(req.Day, req.Month, req.Year))
                 throw new BadRequestInvalidDobException();
 
-            using (var transaction = await _context.Database.BeginTransactionAsync())
-                try
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
+            {
+                var address = await _addressRepository.GetAddressByObjectIdAsync(Guid.Parse(user.Id))
+                    ?? throw new NotFoundAddressException(Guid.Parse(user.Id));
+
+                var picture = user.Picture;
+
+                _mapper.Map(req, user);
+
+                if (req.Picture != null && req.Picture.Length > 0)
                 {
-                    var address = await _addressRepository.GetAddressByObjectIdAsync(Guid.Parse(user.Id))
-                        ?? throw new NotFoundAddressException(Guid.Parse(user.Id));
-
-                    var picture = user.Picture;
-
-                    _mapper.Map(req, user);
-
-                    if (req.Picture != null && req.Picture.Length > 0)
-                    {
-                        var url = await _cloudinary.UploadImageCustomerAsync(req.Picture);
-                        user.Picture = url;
-                    }
-                    else
-                    {
-                        user.Picture = picture;
-                    }
-
-                    user.Dob = new DateOnly(req.Year, req.Month, req.Day);
-
-                    var resultUpdate = await _userManager.UpdateAsync(user);
-
-                    if (!resultUpdate.Succeeded)
-                    {
-                        await transaction.RollbackAsync();
-                        throw new Exception();
-                    }
-
-                    if (address.DistrictId != req.DistrictId || address.Street != req.Street)
-                    {
-                        _mapper.Map(req, address);
-                        _addressRepository.Update(address);
-                    }
-
-                    await _context.SaveChangesAsync();
-
-                    await transaction.CommitAsync();
-
-                    var result = _mapper.Map<UserUpdateDTO>(user);
-
-                    result = await _addressUpdateService.SetAddressAsync(result, Guid.Parse(user.Id));
-
-                    return result;
+                    var url = await _cloudinary.UploadImageCustomerAsync(req.Picture);
+                    user.Picture = url;
                 }
-                catch
+                else
+                {
+                    user.Picture = picture;
+                }
+
+                user.Dob = new DateOnly(req.Year, req.Month, req.Day);
+
+                var resultUpdate = await _userManager.UpdateAsync(user);
+
+                if (!resultUpdate.Succeeded)
                 {
                     await transaction.RollbackAsync();
-                    throw;
+                    throw new Exception();
                 }
+
+                if (address.DistrictId != req.DistrictId || address.Street != req.Street)
+                {
+                    _mapper.Map(req, address);
+                    _addressRepository.Update(address);
+                }
+
+                await _context.SaveChangesAsync();
+
+                await transaction.CommitAsync();
+
+                var result = _mapper.Map<UserUpdateDTO>(user);
+
+                result = await _addressUpdateService.SetAddressAsync(result, Guid.Parse(user.Id));
+
+                return result;
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
         }
 
         public async Task ChangePasswordAsync(string email, ChangePasswordRequest req)
@@ -355,6 +355,35 @@ namespace Services
                 Console.WriteLine(ex.Message);
                 throw;
             }
+        }
+
+        public async Task<StaffDTO> GetStaffProfileAsync(string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email)
+                ?? throw new NotFoundUserByEmailException(email);
+
+            var result = _mapper.Map<StaffDTO>(user);
+
+
+            result = await _addressStaffService.SetAddressAsync(result, Guid.Parse(user.Id));
+
+            if (user.BranchId == Guid.Empty || user.BranchId == null)
+                throw new NotFoundBranchException();
+
+            Branch? branch = await _branchRepository.GetBranchByIdAsync((Guid)user.BranchId)
+                ?? throw new NotFoundBranchException();
+
+            result.BranchName = branch.Name;
+
+            var role = (await _userManager.GetRolesAsync(user)).FirstOrDefault();
+
+            result.Role = !string.IsNullOrEmpty(role) ? role : "Default";
+
+            result.Year = user.Dob.Year;
+            result.Month = user.Dob.Month;
+            result.Day = user.Dob.Day;
+
+            return result;
         }
     }
 }
