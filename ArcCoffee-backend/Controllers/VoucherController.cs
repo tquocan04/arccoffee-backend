@@ -1,12 +1,9 @@
 ﻿using DTOs;
 using DTOs.Requests;
 using DTOs.Responses;
-using Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service.Contracts;
-using Services;
-using Sprache;
 
 namespace ArcCoffee_backend.Controllers
 {
