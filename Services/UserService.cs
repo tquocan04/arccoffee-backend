@@ -364,7 +364,6 @@ namespace Services
 
             var result = _mapper.Map<StaffDTO>(user);
 
-
             result = await _addressStaffService.SetAddressAsync(result, Guid.Parse(user.Id));
 
             if (user.BranchId == Guid.Empty || user.BranchId == null)
@@ -392,6 +391,50 @@ namespace Services
                 ?? throw new NotFoundUserByEmailException(email);
 
             await _userManager.DeleteAsync(user);
+        }
+
+        public async Task UpdateStaffProfileAsync(string email, CreateStaffRequest req)
+        {
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
+            {
+                var user = await _userManager.FindByEmailAsync(email)
+                ?? throw new NotFoundUserByEmailException(email);
+
+                if (!_userRepository.CheckValidDob(req.Day, req.Month, req.Year))
+                    throw new BadRequestInvalidDobException();
+
+                _mapper.Map(req, user);
+                
+                user.Dob = new DateOnly(req.Year, req.Month, req.Day);
+
+                var resultUpdate = await _userManager.UpdateAsync(user);
+
+                if (!resultUpdate.Succeeded)
+                {
+                    await transaction.RollbackAsync();
+                    throw new Exception();
+                }
+
+                var defaultAddress = await _addressRepository.GetAddressByObjectIdAsync(Guid.Parse(user.Id))
+                    ?? throw new NotFoundAddressException(Guid.Parse(user.Id));
+
+                if (defaultAddress.DistrictId != req.DistrictId || defaultAddress.Street != req.Street)
+                {
+                    _mapper.Map(req, defaultAddress);
+                    _addressRepository.Update(defaultAddress);
+                }
+
+                await _context.SaveChangesAsync();
+
+                await transaction.CommitAsync();
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                Console.WriteLine(ex.Message);
+                throw;
+            }
         }
     }
 }

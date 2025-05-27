@@ -4,6 +4,7 @@ using DTOs.Responses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service.Contracts;
+using Sprache;
 using System.Security.Claims;
 
 namespace ArcCoffee_backend.Controllers
@@ -45,6 +46,36 @@ namespace ArcCoffee_backend.Controllers
             {
                 Message = "Successful.",
                 Data = result
+            });
+        }
+
+        [HttpPut]
+        [Authorize(Policy = "StaffOnly")]
+        public async Task<IActionResult> UpdateStaffProfile([FromBody] CreateStaffRequest req)
+        {
+            string? email = User.FindFirst(ClaimTypes.Name)?.Value;
+
+            if (string.IsNullOrEmpty(email))
+            {
+                return Unauthorized(new Response<string>
+                {
+                    Message = "Unable to authenticate user"
+                });
+            }
+
+            if (email != req.Email)
+            {
+                return BadRequest(new Response<string>
+                {
+                    Message = "Email does not match. Email cannot change."
+                });
+            }
+
+            await userService.UpdateStaffProfileAsync(email, req);
+
+            return Ok(new Response<string>
+            {
+                Message = "Successful."
             });
         }
 
