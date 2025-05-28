@@ -80,5 +80,15 @@ namespace Services
 
             return req;
         }
+        
+        public async Task DeleteVoucherAsync(string code)
+        {
+            var voucher = await voucherRepository.GetVoucherByCodeAsync(code, true)
+                ?? throw new NotFoundVoucherByCodeException(code);
+
+            voucher.Quantity = null;
+
+            await voucherRepository.Save();
+        }
     }
 }

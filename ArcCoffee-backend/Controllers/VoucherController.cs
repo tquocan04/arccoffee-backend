@@ -80,5 +80,13 @@ namespace ArcCoffee_backend.Controllers
                 Data = result
             });
         }
+        
+        [HttpDelete]
+        public async Task<IActionResult> DeleteVoucher([FromQuery] string code)
+        {
+           await service.DeleteVoucherAsync(code);
+
+            return NoContent();
+        }
     }
 }

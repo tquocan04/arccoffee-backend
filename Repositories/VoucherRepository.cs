@@ -14,11 +14,13 @@ namespace Repositories
             if (tracking)
             {
                 return await _context.Vouchers
+                    .Where(v => v.Quantity >= 0)
                     .ToListAsync();
             }
 
             return await _context.Vouchers
                 .AsNoTracking()
+                .Where(v => v.Quantity >= 0)
                 .ToListAsync();
         }
 

@@ -9,5 +9,6 @@ namespace Service.Contracts
         Task<VoucherDTO> CreateNewVoucherAsync(CreateVoucherRequest req);
         Task<VoucherDTO> GetVoucherByCodeAsync(string code);
         Task<CreateVoucherRequest> UpdateVoucherAsync(Guid id, CreateVoucherRequest req);
+        Task DeleteVoucherAsync(string code);
     }
 }
