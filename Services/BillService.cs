@@ -5,6 +5,7 @@ using Entities;
 using Entities.Context;
 using ExceptionHandler.Address;
 using ExceptionHandler.Bill;
+using ExceptionHandler.General;
 using ExceptionHandler.Payment;
 using ExceptionHandler.Shipping;
 using ExceptionHandler.User;
@@ -24,7 +25,8 @@ namespace Services
         IPaymentRepository paymentRepository,
         IShippingRepository shippingRepository,
         IAddressRepository addressRepository,
-        IProductRepository productRepository) : IBillService
+        IProductRepository productRepository,
+        IBillRepository billRepository) : IBillService
     {
         private async Task UpdateBillItemsWithProductInfoAsync(BillDTO billDTO)
         {
@@ -48,7 +50,7 @@ namespace Services
 
                 if (string.IsNullOrEmpty(req.PaymentId) || string.IsNullOrWhiteSpace(req.PaymentId))
                     throw new NotFoundPaymentByIdException(req.PaymentId);
-                
+
                 if (string.IsNullOrEmpty(req.ShippingId) || string.IsNullOrWhiteSpace(req.ShippingId))
                     throw new NotFoundShippingByIdException(req.ShippingId);
 
@@ -158,6 +160,58 @@ namespace Services
                 await transaction.RollbackAsync();
                 Console.WriteLine(ex.Message);
                 throw;
+            }
+        }
+
+        public async Task<IEnumerable<BillDTO>> GetBillListAsync(string? email, string status)
+        {
+            if (email != null)
+            {
+                var user = await userManager.FindByEmailAsync(email)
+                    ?? throw new NotFoundUserByEmailException(email);
+
+                var bills = await billRepository.GetBillListAsync(user.Id, status);
+
+                if (bills == null || !bills.Any())
+                    throw new NotFoundListException();
+
+                var result = mapper.Map<IList<BillDTO>>(bills);
+
+                int length = result.Count;
+
+                for (int i = 0; i < length; i++)
+                {
+                    await UpdateBillItemsWithProductInfoAsync(result[i]);
+                    result[i].Name = user.Name;
+                }
+
+                return result;
+            }
+            else
+            {
+                var bills = await billRepository.GetBillListAsync(null, status);
+
+                if (bills == null || !bills.Any())
+                    throw new NotFoundListException();
+
+                var result = mapper.Map<IList<BillDTO>>(bills);
+
+                int length = result.Count;
+
+                for (int i = 0; i < length; i++)
+                {
+                    await UpdateBillItemsWithProductInfoAsync(result[i]);
+
+                    if (!string.IsNullOrEmpty(result[i].CustomerId))
+                    {
+                        var user = await userManager.FindByIdAsync(result[i].CustomerId)
+                            ?? throw new NotFoundUserByEmailException(result[i].CustomerId);
+
+                        result[i].Name = user.Name;
+                    }
+                }
+
+                return result;
             }
         }
     }

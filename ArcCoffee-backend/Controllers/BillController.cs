@@ -1,6 +1,7 @@
 ﻿using DTOs;
 using DTOs.Requests;
 using DTOs.Responses;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service.Contracts;
 using System.Security.Claims;
@@ -22,8 +23,9 @@ namespace ArcCoffee_backend.Controllers
         /// <response code="403">Quyền xác thực không đúng.</response>
         /// <response code="400">Đơn hàng không hợp lệ (do giá trị hóa đơn không lớn hơn 0). || Ngày sinh không hợp lệ. Yêu cầu ngày sinh phải trước ngày hiện tại.</response>
         /// <response code="404">Khách hàng || Phương thức thanh toán || Phương thức giao hàng || Voucher || Địa chỉ mặc định không tồn tại.</response>
-        /// <response code="500">Đã có lỗi trong quá trình tạo nhân viên.</response>
+        /// <response code="500">Đã có lỗi trong quá trình thực hiện.</response>
         [HttpPost]
+        [Authorize(Policy = "CustomerOnly")]
 
         public async Task<IActionResult> CreateNewBill([FromBody] BillRequest req)
         {
@@ -40,6 +42,42 @@ namespace ArcCoffee_backend.Controllers
             var result = await billService.CreateNewBillAsync(email, req);
 
             return Ok(new Response<BillDTO>
+            {
+                Message = "Successful.",
+                Data = result
+            });
+        }
+
+        /// <summary>
+        /// LẤY DANH SÁCH HÓA ĐƠN: Yêu cầu token xác thực cho toàn bộ.
+        /// </summary>
+        /// <param name="status">staus được yêu cầu (Pending và Completed). Mặc định là Pending</param>
+        /// <response code="200">Danh sách được lấy thành công.</response>
+        /// <response code="401">Thông tin xác thực thất bại.</response>
+        /// <response code="403">Quyền xác thực không đúng.</response>
+        /// <response code="404">Không tìm thấy người dùng || kết quả.</response>
+        /// <response code="500">Đã có lỗi trong quá trình thực hiện.</response>
+        [HttpGet]
+        [Authorize(Policy = "All")]
+
+        public async Task<IActionResult> GetBillList([FromQuery] string status = "Pending")
+        {
+            string? email = User.FindFirst(ClaimTypes.Name)?.Value;
+            string? role = User.FindFirst(ClaimTypes.Role)?.Value;
+
+            if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(role))
+            {
+                return Unauthorized(new Response<string>
+                {
+                    Message = "Unable to authenticate user"
+                });
+            }
+
+            IEnumerable<BillDTO> result = (role == "Customer") ?
+                await billService.GetBillListAsync(email, status)
+                : await billService.GetBillListAsync(null, status);
+
+            return Ok(new Response<IEnumerable<BillDTO>>
             {
                 Message = "Successful.",
                 Data = result
