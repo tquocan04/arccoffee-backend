@@ -12,7 +12,7 @@ namespace ArcCoffee_backend.Controllers
     public class BillController(IBillService billService) : ControllerBase
     {
         /// <summary>
-        /// TẠO HÓA ĐƠN: Tạo hóa đơn cho nhân viên mới. Yêu cầu token Customer.
+        /// TẠO HÓA ĐƠN: Tạo hóa đơn cho khách hàng. Yêu cầu token Customer.
         /// </summary>
         /// <remarks>
         /// Cần điền đầy đủ thông tin. voucherCode nếu không có có thể để null hoặc "".
