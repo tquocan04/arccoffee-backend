@@ -41,5 +41,19 @@ namespace Repositories
 
             return await query.FirstOrDefaultAsync(v => v.Code.ToUpper() == code.ToUpper());
         }
+
+        public async Task<bool> IsValidVoucherByIdAsync(Guid? id, DateOnly dateOnly, 
+            decimal? minOrderValue)
+        {
+            var voucher = await _context.Vouchers
+                .AsNoTracking()
+                .Where(v => v.Id == id
+                        && v.ExpiryDate > dateOnly
+                        && v.MinOrderValue <= minOrderValue
+                        && v.Quantity > 0)
+                .FirstOrDefaultAsync();
+
+            return voucher != null; // if != null -> return true;
+        }
     }
 }

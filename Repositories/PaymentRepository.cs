@@ -22,5 +22,12 @@ namespace Repositories
                 .ToListAsync();
         }
 
+        public async Task<Payment?> GetPaymentByIdAsync(string id, bool tracking = false)
+        {
+            IQueryable<Payment> query = tracking ? _context.Payments : _context.Payments.AsNoTracking();
+
+            return await query.FirstOrDefaultAsync(p => p.Id == id);
+        }
+
     }
 }

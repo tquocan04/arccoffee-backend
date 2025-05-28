@@ -18,7 +18,10 @@ namespace Services.Extensions
             config.NewConfig<ShippingDTO, ShippingMethod>().TwoWays();
             
             config.NewConfig<CreateProductRequest, Product>().TwoWays();
-            config.NewConfig<ProductDTO, Product>().TwoWays();
+
+            config.NewConfig<Order, BillDTO>()
+                .Map(dest => dest.ShippingId, src => src.ShippingMethodId)
+                .Map(dest => dest.CustomerId, src => src.UserId);
 
             config.NewConfig<ItemDTO, Product>()
                 .Map(dest => dest.Id, src => src.ProductId)

@@ -8,5 +8,7 @@ namespace Repository.Contracts
         Task<bool> CheckCodeVoucherAsync(string code);
         Task<bool> CheckCodeVoucherByIdAsync(Guid id, string code);
         Task<Voucher?> GetVoucherByCodeAsync(string code, bool tracking = false);
+        Task<bool> IsValidVoucherByIdAsync(Guid? id, DateOnly dateOnly,
+            decimal? minOrderValue);
     }
 }

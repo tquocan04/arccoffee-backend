@@ -48,6 +48,7 @@ namespace ArcCoffee_backend.Extensions
             services.AddScoped<IPaymentRepository, PaymentRepository>();
             services.AddScoped<IVoucherRepository, VoucherRepository>();
             services.AddScoped<IBranchRepository, BranchRepository>();
+            services.AddScoped<IBillRepository, BillRepository>();
 
             return services;
         }
@@ -64,6 +65,7 @@ namespace ArcCoffee_backend.Extensions
             services.AddScoped<IPaymentService, PaymentService>();
             services.AddScoped<IVoucherService, VoucherService>();
             services.AddScoped<IBranchService, BranchService>();
+            services.AddScoped<IBillService, BillService>();
 
             services.AddScoped(typeof(IAddressService<>), typeof(AddressService<>));
 

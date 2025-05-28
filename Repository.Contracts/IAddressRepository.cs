@@ -8,5 +8,6 @@ namespace Repository.Contracts
         Task<Region?> GetRegionByCityIdAsync(Guid cityId);
         Task<City?> GetCityByDistrictIdAsync(Guid districtId);
         Task<District?> GetDistrictByIdAsync(Guid districtId);
+        Task<List<Address>> GetListAddressOfCustomerAsync(string customerId);
     }
 }

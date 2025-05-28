@@ -50,5 +50,14 @@ namespace Repositories
             return await _context.Districts.AsNoTracking()
                                         .FirstOrDefaultAsync(d => d.Id == districtId);
         }
+
+        public async Task<List<Address>> GetListAddressOfCustomerAsync(string customerId)
+        {
+            return await _context.Addresses
+                .AsNoTracking()
+                .Where(a => !a.IsDefault &&
+                        a.UserId == customerId)
+                .ToListAsync();
+        }
     }
 }
