@@ -6,5 +6,6 @@ namespace Repository.Contracts
     {
         Task<IEnumerable<Order>> GetBillListAsync(string? customerId, string status, bool tracking = false);
         Task<Order?> GetBillByIdAsync(Guid id, bool tracking = false);
+        Task<List<Order>> GetCompletedBillByYearMonthAsync(int year, int? month = null);
     }
 }
