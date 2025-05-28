@@ -83,5 +83,35 @@ namespace ArcCoffee_backend.Controllers
                 Data = result
             });
         }
+
+        /// <summary>
+        /// CẬP NHẬT TRẠNG THÁI ĐƠN HÀNG: Yêu cầu token cho Admin và Staff.
+        /// </summary>
+        /// <param name="id">id đơn hàng được yêu cầu.</param>
+        /// <response code="204">Cập nhật thành công.</response>
+        /// <response code="401">Thông tin xác thực thất bại.</response>
+        /// <response code="403">Quyền xác thực không đúng.</response>
+        /// <response code="404">Không tìm thấy đơn hàng.</response>
+        /// <response code="400">Trạng thái đơn hàng không đúng (cần phải trong trạng thái Pending).</response>
+        /// <response code="500">Đã có lỗi trong quá trình thực hiện.</response>
+        [HttpPut]
+        [Authorize(Policy = "AdminAndStaffOnly")]
+        public async Task<IActionResult> CompletedBills([FromQuery] Guid id)
+        {
+            string? email = User.FindFirst(ClaimTypes.Name)?.Value;
+            string? role = User.FindFirst(ClaimTypes.Role)?.Value;
+
+            if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(role))
+            {
+                return Unauthorized(new Response<string>
+                {
+                    Message = "Unable to authenticate user"
+                });
+            }
+
+            await billService.UpdateStatusBillAsync(id);
+
+            return NoContent();
+        }
     }
 }

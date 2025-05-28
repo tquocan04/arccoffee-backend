@@ -6,6 +6,7 @@ using Entities.Context;
 using ExceptionHandler.Address;
 using ExceptionHandler.Bill;
 using ExceptionHandler.General;
+using ExceptionHandler.Order;
 using ExceptionHandler.Payment;
 using ExceptionHandler.Shipping;
 using ExceptionHandler.User;
@@ -213,6 +214,19 @@ namespace Services
 
                 return result;
             }
+        }
+
+        public async Task UpdateStatusBillAsync(Guid id)
+        {
+            var bill = await orderRepository.GetOrderByIdAsync(id, true)
+                ?? throw new NotFoundOrderException(id);
+
+            if (bill.Status != OrderStatus.Pending.ToString())
+                throw new BadRequestBillWithInvalidStatusException();
+
+            bill.Status = OrderStatus.Completed.ToString();
+
+            await orderRepository.Save();
         }
     }
 }

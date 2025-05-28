@@ -8,5 +8,6 @@ namespace Service.Contracts
     {
         Task<BillDTO> CreateNewBillAsync(string email, BillRequest req);
         Task<IEnumerable<BillDTO>> GetBillListAsync(string? email, string status);
+        Task UpdateStatusBillAsync(Guid id);
     }
 }
