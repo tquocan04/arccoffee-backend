@@ -8,6 +8,7 @@ using ExceptionHandler.Branch;
 using ExceptionHandler.User;
 using MapsterMapper;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Repository.Contracts;
 using Service.Contracts;
 using Services.Extensions;
@@ -57,6 +58,41 @@ namespace Services
             _addressStaffService = addressStaffService;
             _branchRepository = branchRepository;
             _cloudinary = cloudinary;
+        }
+
+        public async Task<(string, string?)> LoginAsync(LoginRequest req)
+        {
+            var user = await _userManager.FindByEmailAsync(req.Login)
+                ?? throw new BadRequestLoginException();
+
+            var login = await _signInManager.PasswordSignInAsync(user, req.Password, false, false);
+
+            if (!login.Succeeded)
+                throw new BadRequestLoginException();
+
+            var role = (await _userManager.GetRolesAsync(user)).FirstOrDefault();
+
+            string token = _tokenService.GenerateToken(req, role, user.Id);
+
+            return (token, user.Picture);
+        }
+        
+        public async Task<(string, string?)> LoginByGoogleAsync(string googleId)
+        {
+            var user = await _context.Users.AsNoTracking().FirstOrDefaultAsync(u => u.GoogleId == googleId)
+                ?? throw new NotFoundUserByGoogleIdException();
+
+            LoginRequest req = new()
+            {
+                Login = user.Email,
+                Password = ""
+            };
+
+            var role = (await _userManager.GetRolesAsync(user)).FirstOrDefault();
+
+            string token = _tokenService.GenerateToken(req, role, user.Id);
+
+            return (token, user.Picture);
         }
 
         private async Task CreateAddressAsync<T>(T req, User user) where T : class
@@ -187,23 +223,6 @@ namespace Services
                 Console.WriteLine(ex.Message);
                 throw;
             }
-        }
-
-        public async Task<(string, string?)> LoginAsync(LoginRequest req)
-        {
-            var user = await _userManager.FindByEmailAsync(req.Login)
-                ?? throw new BadRequestLoginException();
-
-            var login = await _signInManager.PasswordSignInAsync(user, req.Password, false, false);
-
-            if (!login.Succeeded)
-                throw new BadRequestLoginException();
-
-            var role = (await _userManager.GetRolesAsync(user)).FirstOrDefault();
-
-            string token = _tokenService.GenerateToken(req, role, user.Id);
-
-            return (token, user.Picture);
         }
 
         public async Task<UserDTO> GetProfileAsync(string email)
