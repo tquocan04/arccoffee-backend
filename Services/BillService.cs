@@ -228,5 +228,25 @@ namespace Services
 
             await orderRepository.Save();
         }
+        
+        public async Task<BillDTO> GetBillByIdAsync(Guid id)
+        {
+            var bill = await billRepository.GetBillByIdAsync(id)
+                ?? throw new NotFoundOrderException(id);
+
+            var result = mapper.Map<BillDTO>(bill);
+
+            await UpdateBillItemsWithProductInfoAsync(result);
+
+            if (!string.IsNullOrEmpty(result.CustomerId))
+            {
+                var user = await userManager.FindByIdAsync(result.CustomerId);
+                
+                if (user != null)
+                    result.Name = user.Name;
+            }
+
+            return result;
+        }
     }
 }

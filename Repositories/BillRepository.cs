@@ -23,5 +23,14 @@ namespace Repositories
 
             return await query.Where(o => o.UserId == customerId).ToListAsync();
         }
+        
+        public async Task<Order?> GetBillByIdAsync(Guid id, bool tracking = false)
+        {
+            IQueryable<Order> query = tracking ? 
+                _context.Orders.Include(o => o.Items)
+                : _context.Orders.AsNoTracking().Include(o => o.Items);
+
+            return await query.FirstOrDefaultAsync(o => o.Id == id);
+        }
     }
 }
