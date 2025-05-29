@@ -136,5 +136,36 @@ namespace ArcCoffee_backend.Controllers
 
             return NoContent();
         }
+        
+        /// <summary>
+        /// LẤY DANH SÁCH NHÂN VIÊN: Yêu cầu token Admin và Staff.
+        /// </summary>
+        /// <response code="200">Lấy danh sách thành công.</response>
+        /// <response code="401">Thông tin xác thực thất bại.</response>
+        /// <response code="403">Quyền xác thực không đúng.</response>
+        /// <response code="404">Không có nhân viên nào.</response>
+        /// <response code="500">Đã có lỗi trong quá trình thực hiện.</response>
+        [Authorize(Policy = "AdminAndStaffOnly")]
+        [HttpGet("staffs")]
+        public async Task<IActionResult> GetStaffList()
+        {
+            string? email = User.FindFirst(ClaimTypes.Name)?.Value;
+
+            if (string.IsNullOrEmpty(email))
+            {
+                return Unauthorized(new Response<string>
+                {
+                    Message = "Unable to authenticate user"
+                });
+            }
+
+            var result = await userService.GetStaffListAsync();
+
+            return Ok(new Response<IEnumerable<StaffDTO>>
+            {
+                Message = "Successful.",
+                Data = result
+            });
+        }
     }
 }

@@ -17,5 +17,6 @@ namespace Service.Contracts
         Task<StaffDTO> GetStaffProfileAsync(string email);
         Task DeleteStaffAsync(string email);
         Task UpdateStaffProfileAsync(string email, CreateStaffRequest req);
+        Task<IEnumerable<StaffDTO>> GetStaffListAsync();
     }
 }

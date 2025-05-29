@@ -5,6 +5,7 @@ using Entities;
 using Entities.Context;
 using ExceptionHandler.Address;
 using ExceptionHandler.Branch;
+using ExceptionHandler.General;
 using ExceptionHandler.User;
 using MapsterMapper;
 using Microsoft.AspNetCore.Identity;
@@ -58,6 +59,11 @@ namespace Services
             _addressStaffService = addressStaffService;
             _branchRepository = branchRepository;
             _cloudinary = cloudinary;
+        }
+
+        private static (int? year, int? month, int? day) GetDobFromDateOnly(DateOnly dateOnly)
+        {
+            return (dateOnly.Year, dateOnly.Month, dateOnly.Day);
         }
 
         public async Task<(string, string?)> LoginAsync(LoginRequest req)
@@ -232,9 +238,7 @@ namespace Services
 
             UserDTO result = _mapper.Map<UserDTO>(user);
 
-            result.Year = user.Dob.Year;
-            result.Month = user.Dob.Month;
-            result.Day = user.Dob.Day;
+            (result.Year, result.Month, result.Day) = GetDobFromDateOnly(user.Dob);
 
             result = await _addressService.SetAddressAsync(result, Guid.Parse(user.Id));
 
@@ -454,6 +458,44 @@ namespace Services
                 Console.WriteLine(ex.Message);
                 throw;
             }
+        }
+
+        public async Task<IEnumerable<StaffDTO>> GetStaffListAsync()
+        {
+            IList<User> staffList = await _userManager.GetUsersInRoleAsync("Staff");
+
+            if (staffList == null || staffList.Count == 0)
+                throw new NotFoundListException();
+
+            var result = _mapper.Map<IList<StaffDTO>>(staffList);
+
+            int length = result.Count;
+
+            for (int i = 0; i < length; i++)
+            {
+                (result[i].Year, result[i].Month, result[i].Day) = GetDobFromDateOnly(staffList[i].Dob);
+
+                if (await _addressRepository.GetAddressByObjectIdAsync(Guid.Parse(result[i].Id)) == null)
+                {
+                    throw new NotFoundAddressException(Guid.Parse(result[i].Id));
+                }
+
+                if (result[i].BranchId != null && result[i].BranchId != Guid.Empty)
+                {
+                    var branch = await _branchRepository.GetBranchByIdAsync((Guid)result[i].BranchId)
+                        ?? throw new NotFoundBranchException();
+
+                    result[i].BranchName = branch.Name;
+                }
+
+                result[i] = await _addressStaffService.SetAddressAsync(result[i], Guid.Parse(result[i].Id));
+
+                var role = (await _userManager.GetRolesAsync(staffList[i])).FirstOrDefault();
+
+                result[i].Role = role ?? "Default";
+            }
+
+            return result;
         }
     }
 }
