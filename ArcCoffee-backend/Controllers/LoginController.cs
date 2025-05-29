@@ -25,6 +25,7 @@ namespace ArcCoffee_backend.Controllers
             {
                 AccessToken = $"Bearer {result.Item1}",
                 Picture = result.Item2,
+                Role = result.Item3
             });
         }
 

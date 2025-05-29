@@ -66,7 +66,7 @@ namespace Services
             return (dateOnly.Year, dateOnly.Month, dateOnly.Day);
         }
 
-        public async Task<(string, string?)> LoginAsync(LoginRequest req)
+        public async Task<(string, string?, string?)> LoginAsync(LoginRequest req)
         {
             var user = await _userManager.FindByEmailAsync(req.Login)
                 ?? throw new BadRequestLoginException();
@@ -80,7 +80,7 @@ namespace Services
 
             string token = _tokenService.GenerateToken(req, role, user.Id);
 
-            return (token, user.Picture);
+            return (token, user.Picture, role);
         }
         
         public async Task<(string, string?)> LoginByGoogleAsync(string googleId)

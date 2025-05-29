@@ -6,7 +6,7 @@ namespace Service.Contracts
 {
     public interface IUserService
     {
-        Task<(string, string?)> LoginAsync(LoginRequest req);
+        Task<(string, string?, string?)> LoginAsync(LoginRequest req);
         Task<(string, string?)> LoginByGoogleAsync(string googleId);
         Task<CustomerResponse> CreateNewCustomerAsync(RegisterRequest req);
         Task<UserDTO> GetProfileAsync(string email);
