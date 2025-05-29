@@ -11,6 +11,14 @@ namespace ArcCoffee_backend.Controllers
     [ApiController]
     public class VoucherController(IVoucherService service) : ControllerBase
     {
+        /// <summary>
+        /// LẤY DANH SÁCH VOUCHER: Yêu cầu token Admin và Staff.
+        /// </summary>
+        /// <response code="200">Lấy danh sách thành công.</response>
+        /// <response code="401">Thông tin xác thực thất bại.</response>
+        /// <response code="403">Quyền xác thực không đúng.</response>
+        /// <response code="404">Không có voucher nào.</response>
+        /// <response code="500">Đã có lỗi trong quá trình thực hiện.</response>
         [HttpGet]
         [Authorize(Policy = "All")]
         public async Task<IActionResult> GetAllVouchers()
@@ -24,6 +32,17 @@ namespace ArcCoffee_backend.Controllers
             });
         }
 
+        /// <summary>
+        /// TẠO MỚI VOUCHER: Yêu cầu token Admin và Staff.
+        /// </summary>
+        /// <remarks>
+        /// Cần điền đầy đủ thông tin.
+        /// </remarks>
+        /// <response code="201">Tạo thành công.</response>
+        /// <response code="401">Thông tin xác thực thất bại.</response>
+        /// <response code="403">Quyền xác thực không đúng.</response>
+        /// <response code="400">Mã voucher đã tồn tại || Thời hạn không hợp lý.</response>
+        /// <response code="500">Đã có lỗi trong quá trình thực hiện.</response>
         [HttpPost]
         [Authorize(Policy = "All")]
         public async Task<IActionResult> CreateNewVoucher([FromBody] CreateVoucherRequest req)
@@ -38,6 +57,16 @@ namespace ArcCoffee_backend.Controllers
                 });
         }
 
+        /// <summary>
+        /// LẤY CHI TIẾT VOUCHER: Yêu cầu token Admin và Staff.
+        /// </summary>
+        /// <param name="code">Mã code voucher được yêu cầu.</param>
+        /// <response code="200">Lấy kết quả thành công.</response>
+        /// <response code="401">Thông tin xác thực thất bại.</response>
+        /// <response code="403">Quyền xác thực không đúng.</response>
+        /// <response code="404">Voucher không tồn tại.</response>
+        /// <response code="400">Số lượng đã hết || Thời gian đã hết hạn.</response>
+        /// <response code="500">Đã có lỗi trong quá trình thực hiện.</response>
         [HttpGet("detail")]
         [Authorize(Policy = "All")]
         public async Task<IActionResult> GetVoucherByCode([FromQuery] string code)
@@ -57,6 +86,15 @@ namespace ArcCoffee_backend.Controllers
             });
         }
 
+        /// <summary>
+        /// LẤY DANH SÁCH VOUCHER.
+        /// </summary>
+        /// <remarks>
+        /// Public cho toàn bộ người dùng.
+        /// </remarks>
+        /// <response code="200">Lấy danh sách thành công.</response>
+        /// <response code="404">Không có voucher nào.</response>
+        /// <response code="500">Đã có lỗi trong quá trình thực hiện.</response>
         [HttpGet("public")]
         public async Task<IActionResult> GetAllVouchersPublic()
         {
@@ -69,6 +107,18 @@ namespace ArcCoffee_backend.Controllers
             });
         }
 
+        /// <summary>
+        /// CẬP NHẬT VOUCHER: Yêu cầu token Admin và Staff.
+        /// </summary>
+        /// <remarks>
+        /// Cần điền đầy đủ thông tin.
+        /// </remarks>
+        /// <response code="200">Thành công.</response>
+        /// <response code="401">Thông tin xác thực thất bại.</response>
+        /// <response code="403">Quyền xác thực không đúng.</response>
+        /// <response code="400">Thời hạn không hợp lý.</response>
+        /// <response code="404">Không có voucher đang được yêu cầu.</response>
+        /// <response code="500">Đã có lỗi trong quá trình thực hiện.</response>
         [HttpPut("{id:guid}")]
         public async Task<IActionResult> UpdateVoucher(Guid id, [FromBody] CreateVoucherRequest req)
         {
@@ -80,7 +130,16 @@ namespace ArcCoffee_backend.Controllers
                 Data = result
             });
         }
-        
+
+        /// <summary>
+        /// XÓA VOUCHER: Yêu cầu token Admin và Staff.
+        /// </summary>
+        /// <param name="code">Mã code voucher được yêu cầu.</param>
+        /// <response code="204">Thành công.</response>
+        /// <response code="401">Thông tin xác thực thất bại.</response>
+        /// <response code="403">Quyền xác thực không đúng.</response>
+        /// <response code="404">Không có voucher đang được yêu cầu.</response>
+        /// <response code="500">Đã có lỗi trong quá trình thực hiện.</response>
         [HttpDelete]
         public async Task<IActionResult> DeleteVoucher([FromQuery] string code)
         {
