@@ -55,5 +55,16 @@ namespace ArcCoffee_backend.Controllers
                 Data = result,
             });
         }
+        
+        [HttpPut("{id:guid}")]
+        public async Task<IActionResult> UpdateCategory(Guid id, [FromBody] CreateCategoryRequest req)
+        {
+            await _categoryService.UpdateCategoryAsync(id, req);
+
+            return Ok(new Response<string>
+            {
+                Message = "Successful.",
+            });
+        }
     }
 }

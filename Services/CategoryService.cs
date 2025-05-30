@@ -56,5 +56,15 @@ namespace Services
             
             return _mapper.Map<CategoryDTO>(result);
         }
+
+        public async Task UpdateCategoryAsync(Guid id, CreateCategoryRequest req)
+        {
+            var category = await _categoryRepository.GetCategoryByIdAsync(id, true)
+                ?? throw new NotFoundCategoryException(id);
+
+            category.Name = req.Name;
+
+            await _categoryRepository.Save();
+        }
     }
 }
