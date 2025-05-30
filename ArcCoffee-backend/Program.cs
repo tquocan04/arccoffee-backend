@@ -29,6 +29,16 @@ builder.Services.ConfigureRepository();
 builder.Services.ConfigureService();
 builder.Services.ConfigureCloudinary();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
+
 builder.Services.AddSwaggerGen(c =>
 {
     // Thêm cấu hình JWT Bearer vào Swagger
@@ -98,5 +108,7 @@ using (var scope = app.Services.CreateScope())
         Console.WriteLine($"Migration failed: {ex.Message}");
     }
 }
+
+app.UseCors("AllowAll");
 
 app.Run();
