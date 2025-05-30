@@ -56,15 +56,15 @@ namespace ArcCoffee_backend.Controllers
             });
         }
         
-        [HttpPut("{id:guid}")]
-        public async Task<IActionResult> UpdateCategory(Guid id, [FromBody] CreateCategoryRequest req)
-        {
-            await _categoryService.UpdateCategoryAsync(id, req);
+        //[HttpPut("{id:guid}")]
+        //public async Task<IActionResult> UpdateCategory(Guid id, [FromBody] CreateCategoryRequest req)
+        //{
+        //    await _categoryService.UpdateCategoryAsync(id, req);
 
-            return Ok(new Response<string>
-            {
-                Message = "Successful.",
-            });
-        }
+        //    return Ok(new Response<string>
+        //    {
+        //        Message = "Successful.",
+        //    });
+        //}
     }
 }
