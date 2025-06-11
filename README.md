@@ -1,6 +1,15 @@
-# Arc Coffee
+# Arc Coffee API
 
-Arc Coffee is a RESTful API backend for managing bottled water products and orders. Built with ASP.NET Core, it leverages Entity Framework Core, SQL Server, JWT authentication, and Cloudinary for image storage. The application is containerized using Docker and deployed with Nginx as a reverse proxy.
+## Introduction
+The **Arc Coffee API** powers the ArcCoffee platform with a comprehensive set of services for managing bottled water products and customer orders. Developed with **ASP.NET Core**, it integrates key technologies such as **Entity Framework Core** for data access, **SQL Server** for database management, **JWT authentication** for secure access, and **Cloudinary** for efficient image storage. The entire application is containerized using **Docker** and deployed seamlessly with **Nginx** serving as a reverse proxy for optimized performance and scalability.
+
+## Related Repositories
+
+This project is part of a larger ecosystem. Here are the related repositories:
+
+- *Frontend (User Website):* [eCommerce Website - User Interface](https://github.com/TuananhDo0308/arccoffee.git)
+- *Admin Dashboard:* [Admin Dashboard](https://github.com/TuananhDo0308/arccoffee-admin.git)
+
 
 ## Features
 - **Product Management**: Create, read, update, and delete bottled water products.
