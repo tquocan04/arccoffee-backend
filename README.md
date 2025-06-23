@@ -3,6 +3,9 @@
 ## Introduction
 The **Arc Coffee API** powers the ArcCoffee platform with a comprehensive set of services for managing bottled water products and customer orders. Developed with **ASP.NET Core**, it integrates key technologies such as **Entity Framework Core** for data access, **SQL Server** for database management, **JWT authentication** for secure access, and **Cloudinary** for efficient image storage. The entire application is containerized using **Docker** and deployed seamlessly with **Nginx** serving as a reverse proxy for optimized performance and scalability.
 
+## Preview
+![Website Preview](https://res.cloudinary.com/dn5rrigtr/image/upload/v1750699028/home_vj6noo.png)
+
 ## Related Repositories
 
 This project is part of a larger ecosystem. Here are the related repositories:
